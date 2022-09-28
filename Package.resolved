@@ -1,0 +1,43 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "CrystalButtonKit",
+        "repositoryURL": "https://github.com/robhasacamera/CrystalButtonKit.git",
+        "state": {
+          "branch": null,
+          "revision": "170f7ca97011ea1a2122d9dc08345b04de29f050",
+          "version": "1.0.5"
+        }
+      },
+      {
+        "package": "CrystalViewUtilities",
+        "repositoryURL": "https://github.com/robhasacamera/CrystalViewUtilities.git",
+        "state": {
+          "branch": null,
+          "revision": "6812f2842e4f6c426398ac09d67ae1e33ec82231",
+          "version": "0.2.0"
+        }
+      },
+      {
+        "package": "CUIPreviewKit",
+        "repositoryURL": "https://github.com/robhasacamera/CUIPreviewKit.git",
+        "state": {
+          "branch": null,
+          "revision": "29e38bf9008919c63e15c84637612e80a47bd62a",
+          "version": "0.1.2"
+        }
+      },
+      {
+        "package": "CUISeparator",
+        "repositoryURL": "https://github.com/robhasacamera/CUISeparator.git",
+        "state": {
+          "branch": null,
+          "revision": "0dfe344d5bb9afb9dea1e0974995e693001cd569",
+          "version": "0.3.1"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
