@@ -38,44 +38,94 @@ extension View {
         onDismiss: (() -> Void)? = nil,
         @ViewBuilder content: @escaping () -> Content
     ) -> some View where Content: View {
-        presentFullScreen(
+        WindowPresentor(
             isPresented: isPresented,
             dimmed: dimmed,
             tapBackgroundToDismiss: tapBackgroundToDismiss,
             onDismiss: onDismiss
         ) {
-            WindowPresentor { content() }
+            self
+        } presentedContent: {
+            content()
         }
     }
 }
 
-struct WindowPresentor<Content>: View where Content: View {
+// TODO: This and FullScreenCoverContainer can probably be made in a very generic way. They're both essentially doing the say thing, chaining presenting/dismissing behavior.
+struct WindowPresentor<OriginalContent, PresentedContent>: View where OriginalContent: View, PresentedContent: View {
     @State
-    var hidden = true
+    var internalIsPresented: Bool = false
+    @State
+    var windowHidden: Bool = true
 
-    var content: Content
+    @Binding
+    var isPresented: Bool
 
-    init(@ViewBuilder content: @escaping () -> Content) {
-        self.content = content()
+    let dimmed: Bool
+    let tapBackgroundToDismiss: Bool
+    let onDismiss: (() -> Void)?
+    let originalContent: OriginalContent
+    let presentedContent: PresentedContent
+
+    let animationTime: TimeInterval = 0.1
+
+    init(
+        isPresented: Binding<Bool>,
+        dimmed: Bool = true,
+        tapBackgroundToDismiss: Bool = true,
+        onDismiss: (() -> Void)? = nil,
+        @ViewBuilder originalContent: @escaping () -> OriginalContent,
+        @ViewBuilder presentedContent: @escaping () -> PresentedContent
+    ) {
+        self.dimmed = dimmed
+        self.tapBackgroundToDismiss = tapBackgroundToDismiss
+        self.onDismiss = onDismiss
+        self.originalContent = originalContent()
+        self.presentedContent = presentedContent()
+
+        self._isPresented = isPresented
+        self.internalIsPresented = isPresented.wrappedValue
     }
 
     var body: some View {
-        ZStack {
-            Rectangle()
-                .foregroundColor(.clear)
-                .frame(width: 0, height: 0)
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        hidden = false
+        originalContent
+            .presentFullScreen(
+                isPresented: $internalIsPresented,
+                dimmed: dimmed,
+                tapBackgroundToDismiss: tapBackgroundToDismiss,
+                onDismiss: onDismiss
+            ) {
+                ZStack {
+                    Rectangle()
+                        .foregroundColor(.clear)
+                        .frame(width: 0, height: 0)
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + animationTime) {
+                                windowHidden = false
+                            }
+                        }
+
+                    if !windowHidden {
+                        CUIWindow { presentedContent }
+                            .transition(.opacity.combined(with: .move(edge: .bottom)))
                     }
                 }
-
-            if !hidden {
-                CUIWindow { content }
-                    .transition(.opacity.combined(with: .move(edge: .bottom)))
+                .animation(.linear(duration: animationTime), value: windowHidden)
             }
-        }
-        .animation(.default, value: hidden)
+            .onChange(of: isPresented) { _ in
+                // if presented, then present the window after fade in animation
+                // if not presented, then fade out window before triggering the presented animation
+
+                if isPresented {
+                    internalIsPresented = true
+                } else {
+                    windowHidden = true
+
+                    DispatchQueue.main.asyncAfter(deadline: .now() + animationTime) {
+                        internalIsPresented = false
+                    }
+                }
+            }
     }
 }
 
