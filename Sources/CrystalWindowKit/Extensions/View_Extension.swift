@@ -69,29 +69,24 @@ extension View {
                         targetFrame: proxy?.frame(in: .global) ?? .zero,
                         content: CUIWindow { content() }
                     )
-                    .overlay {
-                        Text(
-                            String(
-                                format: "x=%.0f,y=%.0f",
-                                proxy?.frame(in: .global).minX ?? 1,
-                                proxy?.frame(in: .global).minY ?? 1
-                            )
-                        )
-                    }
                 }
         }
     }
 }
 
-// FIXME, This is working pretty well, still not sure why it's off by about 6 points vertically
+// TODO: Think about moving these presentors to their own files. This one is getting a bit crowded.
+// TODO: Add a proper init
+// TODO: Add a way to specify a target edge
+// FIXME: This is working pretty well, still not sure why it's off by about 6 points vertically
 struct ToolTipPresentor<Content>: View where Content: View {
+    let toolTipSpacing: CGFloat = .standardSpacing
+    let yAdjustment_FIXME_SHOULD_NOT_BE_NEEDED: CGFloat = -6
+
     @State
     var size: CGSize = .zero
 
     var targetFrame: CGRect
     var content: Content
-
-    let toolTipSpacing: CGFloat = 10
 
     var targetEdge: Edge {
         let topScreenSpace = targetFrame.minY - toolTipSpacing * 2
@@ -164,19 +159,9 @@ struct ToolTipPresentor<Content>: View where Content: View {
                         y = targetFrame.minY + (targetFrame.height - size.height) / 2
                     }
 
-                    return min(max(y, toolTipSpacing), UIScreen.height - toolTipSpacing - size.height)
+                    return min(max(y, toolTipSpacing), UIScreen.height - toolTipSpacing - size.height) + yAdjustment_FIXME_SHOULD_NOT_BE_NEEDED
                 }()
             )
-            .overlay {
-                Text(
-                    String(
-                        format: "x=%.0f,y=%.0f",
-                        targetFrame.minX,
-                        targetFrame.minY
-                    )
-                )
-                .foregroundColor(.yellow)
-            }
         }
     }
 }
@@ -290,28 +275,93 @@ struct PresentWindow_Previews: PreviewProvider {
 struct PresentToolTip_Previews: PreviewProvider {
     struct Preview: View {
         @State
-        var showFullScreen = false
+        var showTopLeading = false
+        @State
+        var showTopTrailing = false
+        @State
+        var showBottomLeading = false
+        @State
+        var showBottomTrailing = false
+        @State
+        var showCenter = false
 
         var body: some View {
-            HStack {
-                Circle().foregroundColor(.yellow)
-                    .frame(width: 200, height: 200)
-                    .fixedSize()
-                    .background(.green)
+            VStack {
+                HStack {
+                    CUIButton(title: "tl") {
+                        showTopLeading.toggle()
+                    }
+                    .presentToolTip(isPresented: $showTopLeading) {
+                        ZStack {
+                            Button("hide tooltip") {
+                                showTopLeading.toggle()
+                            }
+                            .padding()
+                        }
+                    }
 
-                CUIButton(title: "s") {
-                    showFullScreen.toggle()
+                    Spacer()
+
+                    CUIButton(title: "tt") {
+                        showTopTrailing.toggle()
+                    }
+                    .presentToolTip(isPresented: $showTopTrailing) {
+                        ZStack {
+                            Button("hide tooltip") {
+                                showTopTrailing.toggle()
+                            }
+                            .padding()
+                        }
+                    }
                 }
-                .presentToolTip(isPresented: $showFullScreen) {
+
+                Spacer()
+
+                CUIButton(title: "c") {
+                    showCenter.toggle()
+                }
+                .presentToolTip(isPresented: $showCenter) {
                     ZStack {
                         Button("hide tooltip") {
-                            showFullScreen.toggle()
+                            showCenter.toggle()
                         }
                         .padding()
                     }
                 }
-                .offset(x: 50, y: -360)
+
+                Spacer()
+
+                HStack {
+                    CUIButton(title: "bl") {
+                        showBottomLeading.toggle()
+                    }
+                    .presentToolTip(isPresented: $showBottomLeading) {
+                        ZStack {
+                            Button("hide tooltip") {
+                                showBottomLeading.toggle()
+                            }
+                            .padding()
+                        }
+                    }
+
+                    Spacer()
+
+                    CUIButton(title: "bt") {
+                        showBottomTrailing.toggle()
+                    }
+                    .presentToolTip(isPresented: $showBottomTrailing) {
+                        ZStack {
+                            Button("hide tooltip") {
+                                showBottomTrailing.toggle()
+                            }
+                            .padding()
+                        }
+                    }
+                }
             }
+            .padding(.standardSpacing)
+            // FIXME: This case doesn't work.
+//            .previewInterfaceOrientation(.landscapeLeft)
         }
     }
 
