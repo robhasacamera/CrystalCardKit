@@ -52,10 +52,10 @@ extension View {
     }
 
     // TODO: Document
-    // TODO: Add anchor options (placement on view and on tooltip
+    // TODO: Add option to force an edge to be used.
+    // TODO: Add pointer option
     func presentToolTip<Content>(
         isPresented: Binding<Bool>,
-        alignment: Alignment = .top,
         dimmed: Bool = true,
         tapBackgroundToDismiss: Bool = true,
         onDismiss: (() -> Void)? = nil,
@@ -64,7 +64,12 @@ extension View {
         // TODO: Need to document the difference between this and a regular goemtry reader. I think it's that a regular geomtry reader provides the geometry for a parent while this one provides geometry for the child inside of it. So it can use it's own geometry on itself.
         CUIChildGeometryReader(id: "cui_tooltip_child") { proxy in
             self
-                .presentFullScreen(isPresented: isPresented) {
+                .presentFullScreen(
+                    isPresented: isPresented,
+                    dimmed: dimmed,
+                    tapBackgroundToDismiss: tapBackgroundToDismiss,
+                    onDismiss: onDismiss
+                ) {
                     ToolTipPresentor(
                         targetFrame: proxy?.frame(in: .global) ?? .zero,
                         content: CUIWindow { content() }
@@ -124,7 +129,6 @@ struct ToolTipPresentor<Content>: View where Content: View {
 
             CUISizeReader(size: $size, id: "1") {
                 content
-
             }
             // FIXME: Still have no idea why everything is off by a few points (~6 points vertically), and sometimes half points
             // TODO: Do a lot of calculations regarding the frame to decide if the tooltip should be above or below and centered versus off center. Thinking that the arrow will always point to the center top/bottom of the target
