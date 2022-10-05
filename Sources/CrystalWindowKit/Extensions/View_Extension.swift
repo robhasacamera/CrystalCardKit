@@ -73,7 +73,7 @@ extension View {
                     ToolTipPresentor(
                         targetFrame: proxy?.frame(in: .global) ?? .zero,
                         content: CUIWindow { content() }
-                    )
+                    ).ignoresSafeArea()
                 }
         }
     }
@@ -84,8 +84,8 @@ extension View {
 // TODO: Add a way to specify a target edge
 // FIXME: This is working pretty well, still not sure why it's off by about 6 points vertically
 struct ToolTipPresentor<Content>: View where Content: View {
-    let toolTipSpacing: CGFloat = .standardSpacing
-    let yAdjustment_FIXME_SHOULD_NOT_BE_NEEDED: CGFloat = -6
+    let toolTipSpacing: CGFloat = 0 // .standardSpacing
+    let yAdjustment_FIXME_SHOULD_NOT_BE_NEEDED: CGFloat = 0 // -6
 
     @State
     var size: CGSize = .zero
@@ -101,7 +101,7 @@ struct ToolTipPresentor<Content>: View where Content: View {
         }
 
         // TODO: Add buffer here
-        let bottomScreenSpace = UIScreen.height - targetFrame.maxX - toolTipSpacing * 2
+        let bottomScreenSpace = UIScreen.height - targetFrame.maxY - toolTipSpacing * 2
 
         if bottomScreenSpace > size.height {
             return .bottom
@@ -115,21 +115,38 @@ struct ToolTipPresentor<Content>: View where Content: View {
 
         let trailingScreenSpace = UIScreen.width - targetFrame.maxX - toolTipSpacing * 2
 
-        if trailingScreenSpace > toolTipSpacing {
+        if trailingScreenSpace > size.width {
             return .trailing
         }
 
         return .top
     }
 
+    var _targetEdgeString: String {
+        switch targetEdge {
+        case .top:
+            return "top"
+        case .leading:
+            return "leading"
+        case .bottom:
+            return "bottom"
+        case .trailing:
+            return "trailing"
+        }
+    }
+
     var body: some View {
         ZStack(alignment: .topLeading) {
-            Spacer()
+            // FIXME: When this is added, it causes the ZStack to shift outside of the frame. Without it the ZStack will not be large enough. Using the rectangle to visualize things.
+            // Spacer()
+            Rectangle()
+                .foregroundColor(.black.opacity(0.2))
                 .frame(width: UIScreen.width, height: UIScreen.height)
 
             CUISizeReader(size: $size, id: "1") {
                 content
             }
+            // TODO: Need to take the safe area into account
             // FIXME: Still have no idea why everything is off by a few points (~6 points vertically), and sometimes half points
             // TODO: Do a lot of calculations regarding the frame to decide if the tooltip should be above or below and centered versus off center. Thinking that the arrow will always point to the center top/bottom of the target
             .offset(
@@ -166,6 +183,17 @@ struct ToolTipPresentor<Content>: View where Content: View {
                     return min(max(y, toolTipSpacing), UIScreen.height - toolTipSpacing - size.height) + yAdjustment_FIXME_SHOULD_NOT_BE_NEEDED
                 }()
             )
+        }
+        .frame(width: UIScreen.width, height: UIScreen.height)
+        .overlay {
+            VStack {
+                Text(String(format: "origin = (%.0f, %.0f)", targetFrame.minX, targetFrame.minY))
+                Text(String(format: "size = (%.0f, %.0f)", targetFrame.width, targetFrame.height))
+                Text(String(format: "tooltip size = (%.0f, %.0f)", size.width, size.height))
+                Text("\(_targetEdgeString)")
+            }
+            .padding(.standardSpacing)
+            .background(.thinMaterial)
         }
     }
 }
@@ -264,7 +292,7 @@ struct PresentWindow_Previews: PreviewProvider {
                         Button("showWindow=\(showFullScreen ? "true" : "false")") {
                             showFullScreen.toggle()
                         }
-                        .padding()
+//                        .padding()
                     }
                 }
             }
@@ -365,7 +393,7 @@ struct PresentToolTip_Previews: PreviewProvider {
             }
             .padding(.standardSpacing)
             // FIXME: This case doesn't work.
-//            .previewInterfaceOrientation(.landscapeLeft)
+            .previewInterfaceOrientation(.landscapeLeft)
         }
     }
 
