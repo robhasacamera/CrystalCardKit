@@ -85,8 +85,10 @@ extension View {
     }
 }
 
+// FIXME: This works until you take into account that there are multiple elements on the screen, so this might be underneath one of the existing elements.
+// FIXME: The tooltip arrow is detached for the bottom presentation style.
 struct ToolTipWrapper<Target, Content>: View where Target: View, Content: View {
-    let toolTipSpacing: CGFloat = .standardSpacing
+    let toolTipSpacing: CGFloat = .standardSpacing * 2
 
     @State
     var toolTipSize: CGSize = .zero
@@ -155,6 +157,54 @@ struct ToolTipWrapper<Target, Content>: View where Target: View, Content: View {
                         }
                 }
                 .overlay {
+                    ToolTipArrow(
+                        toolTipDirection: presentationEdge(
+                            targetFrame: proxy?.frame(in: .global) ?? .zero
+                        ),
+                        toolTipSpacing: toolTipSpacing
+                    )
+                    .foregroundStyle(.ultraThinMaterial)
+                    .frame(width: toolTipSpacing, height: toolTipSpacing)
+                    .offset(
+                        x: {
+                            let targetFrame = proxy?.frame(in: .global) ?? .zero
+
+                            let edge = presentationEdge(targetFrame: targetFrame)
+
+                            let offset = (targetFrame.size.width + toolTipSpacing) / 2
+
+                            switch edge {
+                            case .bottom: fallthrough
+                            case .top:
+                                return 0
+                            case .leading:
+                                return -offset
+                            case .trailing:
+                                return offset
+                            }
+                    }(),
+                        y: {
+                            let targetFrame = proxy?.frame(in: .global) ?? .zero
+
+                            let edge = presentationEdge(targetFrame: targetFrame)
+
+                            let offset = (targetFrame.size.height + toolTipSpacing) / 2
+
+                            switch edge {
+                            case .bottom:
+                                return offset
+                            case .top:
+                                return -offset
+                            case .leading: fallthrough
+                            case .trailing:
+                                return 0
+                            }
+                        }()
+                    )
+                    .opacity(isPresented ? 1 : 0)
+                    .scaleEffect(isPresented ? 1 : 0)
+                }
+                .overlay {
                     CUISizeReader(size: $toolTipSize, id: "__tooltip") {
                         content
                     }
@@ -167,15 +217,23 @@ struct ToolTipWrapper<Target, Content>: View where Target: View, Content: View {
 
                             let offset = (targetFrame.size.width + toolTipSize.width) / 2 + toolTipSpacing
 
+                            let minX = toolTipSize.width / 2 - targetFrame.midX + toolTipSpacing
+
+                            let maxX = -(toolTipSize.width / 2 + targetFrame.midX - UIScreen.width + toolTipSpacing)
+
+                            let x: CGFloat
+
                             switch edge {
                             case .bottom: fallthrough
                             case .top:
-                                return 0
+                                x = 0
                             case .leading:
-                                return -offset
+                                x = -offset
                             case .trailing:
-                                return offset
+                                x = offset
                             }
+
+                            return min(maxX, max(minX, x))
                         }(),
                         y: {
                             let targetFrame = proxy?.frame(in: .global) ?? .zero
@@ -184,15 +242,23 @@ struct ToolTipWrapper<Target, Content>: View where Target: View, Content: View {
 
                             let offset = (targetFrame.size.height + toolTipSize.height) / 2 + toolTipSpacing
 
+                            let minY = toolTipSize.height / 2 - targetFrame.midY + toolTipSpacing
+
+                            let maxY = -(toolTipSize.height / 2 + targetFrame.midY - UIScreen.height + toolTipSpacing)
+
+                            let y: CGFloat
+
                             switch edge {
                             case .bottom:
-                                return offset
+                                y = offset
                             case .top:
-                                return -offset
+                                y = -offset
                             case .leading: fallthrough
                             case .trailing:
-                                return 0
+                                y = 0
                             }
+
+                            return min(maxY, max(minY, y))
                         }()
                     )
                     .opacity(isPresented ? 1 : 0)
@@ -516,7 +582,7 @@ struct PresentToolTip_Previews: PreviewProvider {
             }
             .padding(.standardSpacing)
             // FIXME: This case doesn't work.
-            .previewInterfaceOrientation(.landscapeLeft)
+//            .previewInterfaceOrientation(.landscapeLeft)
         }
     }
 
