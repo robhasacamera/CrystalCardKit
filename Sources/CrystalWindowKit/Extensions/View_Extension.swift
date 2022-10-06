@@ -86,12 +86,42 @@ extension View {
 }
 
 struct ToolTipWrapper<Target, Content>: View where Target: View, Content: View {
+    let toolTipSpacing: CGFloat = .standardSpacing
+
     @State
-    var tooltipSize: CGSize = .zero
+    var toolTipSize: CGSize = .zero
     @Binding
     var isPresented: Bool
     var target: Target
     var content: Content
+
+    func presentationEdge(targetFrame: CGRect) -> Edge {
+        let topScreenSpace = targetFrame.minY - toolTipSpacing * 2
+
+        if topScreenSpace > toolTipSize.height {
+            return .top
+        }
+
+        let bottomScreenSpace = UIScreen.height - targetFrame.maxY - toolTipSpacing * 2
+
+        if bottomScreenSpace > toolTipSize.height {
+            return .bottom
+        }
+
+        let leadingScreenSpace = targetFrame.minX - toolTipSpacing * 2
+
+        if leadingScreenSpace > toolTipSize.width {
+            return .leading
+        }
+
+        let trailingScreenSpace = UIScreen.width - targetFrame.maxX - toolTipSpacing * 2
+
+        if trailingScreenSpace > toolTipSize.width {
+            return .trailing
+        }
+
+        return .top
+    }
 
     init(
         isPresented: Binding<Bool>,
@@ -125,7 +155,7 @@ struct ToolTipWrapper<Target, Content>: View where Target: View, Content: View {
                         }
                 }
                 .overlay {
-                    CUISizeReader(size: $tooltipSize, id: "__tooltip") {
+                    CUISizeReader(size: $toolTipSize, id: "__tooltip") {
                         content
                     }
                     .offset(
@@ -133,12 +163,36 @@ struct ToolTipWrapper<Target, Content>: View where Target: View, Content: View {
                         x: {
                             let targetFrame = proxy?.frame(in: .global) ?? .zero
 
-                            return 0
+                            let edge = presentationEdge(targetFrame: targetFrame)
+
+                            let offset = (targetFrame.size.width + toolTipSize.width) / 2 + toolTipSpacing
+
+                            switch edge {
+                            case .bottom: fallthrough
+                            case .top:
+                                return 0
+                            case .leading:
+                                return -offset
+                            case .trailing:
+                                return offset
+                            }
                         }(),
                         y: {
                             let targetFrame = proxy?.frame(in: .global) ?? .zero
 
-                            return (targetFrame.size.height + tooltipSize.height) / 2
+                            let edge = presentationEdge(targetFrame: targetFrame)
+
+                            let offset = (targetFrame.size.height + toolTipSize.height) / 2 + toolTipSpacing
+
+                            switch edge {
+                            case .bottom:
+                                return offset
+                            case .top:
+                                return -offset
+                            case .leading: fallthrough
+                            case .trailing:
+                                return 0
+                            }
                         }()
                     )
                     .opacity(isPresented ? 1 : 0)
@@ -170,7 +224,6 @@ struct ToolTipPresentor<Content>: View where Content: View {
             return .top
         }
 
-        // TODO: Add buffer here
         let bottomScreenSpace = UIScreen.height - targetFrame.maxY - toolTipSpacing * 2
 
         if bottomScreenSpace > size.height {
