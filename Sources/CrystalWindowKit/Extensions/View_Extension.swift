@@ -62,19 +62,89 @@ extension View {
         @ViewBuilder content: @escaping () -> Content
     ) -> some View where Content: View {
         // TODO: Need to document the difference between this and a regular goemtry reader. I think it's that a regular geomtry reader provides the geometry for a parent while this one provides geometry for the child inside of it. So it can use it's own geometry on itself.
-        CUIChildGeometryReader(id: "cui_tooltip_child") { proxy in
+        ToolTipWrapper(isPresented: isPresented) {
             self
-                .presentFullScreen(
-                    isPresented: isPresented,
-                    dimmed: dimmed,
-                    tapBackgroundToDismiss: tapBackgroundToDismiss,
-                    onDismiss: onDismiss
-                ) {
-                    ToolTipPresentor(
-                        targetFrame: proxy?.frame(in: .global) ?? .zero,
-                        content: CUIWindow { content() }
-                    ).ignoresSafeArea()
+        } content: {
+            CUIWindow {
+                content()
+            }
+        }
+
+//                .presentFullScreen(
+//                    isPresented: isPresented,
+//                    dimmed: dimmed,
+//                    tapBackgroundToDismiss: tapBackgroundToDismiss,
+//                    onDismiss: onDismiss
+//                ) {
+//                    ToolTipPresentor(
+//                        targetFrame: proxy?.frame(in: .global) ?? .zero,
+//                        content: CUIWindow { content() }
+//                    ).ignoresSafeArea()
+//                }
+//        }
+    }
+}
+
+struct ToolTipWrapper<Target, Content>: View where Target: View, Content: View {
+    @State
+    var tooltipSize: CGSize = .zero
+    @Binding
+    var isPresented: Bool
+    var target: Target
+    var content: Content
+
+    init(
+        isPresented: Binding<Bool>,
+        @ViewBuilder target: () -> Target,
+        @ViewBuilder content: () -> Content
+    ) {
+        self._isPresented = isPresented
+        self.target = target()
+        self.content = content()
+    }
+
+    var body: some View {
+        CUIChildGeometryReader(id: "__target") { proxy in
+            target
+                .overlay {
+                    Color.black.opacity(isPresented ? 0.2 : 0).frame(width: UIScreen.width, height: UIScreen.height)
+                        .offset(
+                            x: {
+                                let targetFrame = proxy?.frame(in: .global) ?? .zero
+
+                                return UIScreen.width / 2 - targetFrame.size.width / 2 - targetFrame.minX
+                            }(),
+                            y: {
+                                let targetFrame = proxy?.frame(in: .global) ?? .zero
+
+                                return UIScreen.height / 2 - targetFrame.size.height / 2 - targetFrame.minY
+                            }()
+                        )
+                        .onTapGesture {
+                            isPresented.toggle()
+                        }
                 }
+                .overlay {
+                    CUISizeReader(size: $tooltipSize, id: "__tooltip") {
+                        content
+                    }
+                    .offset(
+                        // TODO: need to do the calculations for what edge to use.
+                        x: {
+                            let targetFrame = proxy?.frame(in: .global) ?? .zero
+
+                            return 0
+                        }(),
+                        y: {
+                            let targetFrame = proxy?.frame(in: .global) ?? .zero
+
+                            return (targetFrame.size.height + tooltipSize.height) / 2
+                        }()
+                    )
+                    .opacity(isPresented ? 1 : 0)
+                    .scaleEffect(isPresented ? 1 : 0)
+                }
+                .animation(.default, value: isPresented)
         }
     }
 }
