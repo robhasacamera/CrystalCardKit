@@ -56,6 +56,7 @@ extension View {
     // TODO: Add pointer option
     func presentToolTip<Content>(
         isPresented: Binding<Bool>,
+        presentationEdge: Edge? = nil,
         dimmed: Bool = true,
         tapBackgroundToDismiss: Bool = true,
         onDismiss: (() -> Void)? = nil,
@@ -71,8 +72,10 @@ extension View {
             ) {
                 ToolTipPresentor(
                     targetFrame: proxy?.frame(in: .global) ?? .zero,
-                    content: CUIWindow { content() }
-                )
+                    presentationEdge: presentationEdge
+                ) {
+                    CUIWindow { content() }
+                }
             }
         }
     }
@@ -82,15 +85,30 @@ extension View {
 // TODO: Add a proper init
 // TODO: Add a way to specify a target edge
 struct ToolTipPresentor<Content>: View where Content: View {
+    internal init(
+        targetFrame: CGRect,
+        presentationEdge: Edge? = nil,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.targetFrame = targetFrame
+        self.presentationEdge = presentationEdge
+        self.content = content()
+    }
+
     let toolTipSpacing: CGFloat = .standardSpacing
 
     @State
     var size: CGSize = .zero
 
     var targetFrame: CGRect
+    var presentationEdge: Edge?
     var content: Content
 
     var targetEdge: Edge {
+        if let presentationEdge {
+            return presentationEdge
+        }
+
         let topScreenSpace = targetFrame.minY - toolTipSpacing * 2
 
         if topScreenSpace > size.height {
@@ -298,7 +316,9 @@ struct PresentToolTip_Previews: PreviewProvider {
                     CUIButton(title: "tl") {
                         showTopLeading.toggle()
                     }
-                    .presentToolTip(isPresented: $showTopLeading) {
+                    .presentToolTip(
+                        isPresented: $showTopLeading
+                    ) {
                         ZStack {
                             Button("hide tooltip") {
                                 showTopLeading.toggle()
@@ -368,6 +388,87 @@ struct PresentToolTip_Previews: PreviewProvider {
             }
             .padding(.standardSpacing)
 //            .previewInterfaceOrientation(.landscapeLeft)
+        }
+    }
+
+    static var previews: some View {
+        Preview()
+    }
+}
+
+struct PresentToolTipForcedEdges_Previews: PreviewProvider {
+    struct Preview: View {
+        @State
+        var showLeading = false
+        @State
+        var showTrailing = false
+        @State
+        var showTop = false
+        @State
+        var showBottom = false
+
+        var body: some View {
+            VStack {
+                CUIButton(title: "leading") {
+                    showLeading.toggle()
+                }
+                .presentToolTip(
+                    isPresented: $showLeading,
+                    presentationEdge: .leading
+                ) {
+                    ZStack {
+                        Button("hide tooltip") {
+                            showLeading.toggle()
+                        }
+                        .padding()
+                    }
+                }
+
+                CUIButton(title: "trailing") {
+                    showTrailing.toggle()
+                }
+                .presentToolTip(
+                    isPresented: $showTrailing,
+                    presentationEdge: .trailing
+                ) {
+                    ZStack {
+                        Button("hide tooltip") {
+                            showTrailing.toggle()
+                        }
+                        .padding()
+                    }
+                }
+
+                CUIButton(title: "top") {
+                    showTop.toggle()
+                }
+                .presentToolTip(
+                    isPresented: $showTop,
+                    presentationEdge: .top
+                ) {
+                    ZStack {
+                        Button("hide tooltip") {
+                            showTop.toggle()
+                        }
+                        .padding()
+                    }
+                }
+
+                CUIButton(title: "bottom") {
+                    showBottom.toggle()
+                }
+                .presentToolTip(
+                    isPresented: $showBottom,
+                    presentationEdge: .bottom
+                ) {
+                    ZStack {
+                        Button("hide tooltip") {
+                            showBottom.toggle()
+                        }
+                        .padding()
+                    }
+                }
+            }
         }
     }
 
