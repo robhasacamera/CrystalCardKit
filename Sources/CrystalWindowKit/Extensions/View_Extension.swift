@@ -62,26 +62,26 @@ extension View {
         @ViewBuilder content: @escaping () -> Content
     ) -> some View where Content: View {
         // TODO: Need to document the difference between this and a regular goemtry reader. I think it's that a regular geomtry reader provides the geometry for a parent while this one provides geometry for the child inside of it. So it can use it's own geometry on itself.
-        ToolTipWrapper(isPresented: isPresented) {
-            self
-        } content: {
-            CUIWindow {
-                content()
+//        ToolTipWrapper(isPresented: isPresented) {
+//            self
+//        } content: {
+//            CUIWindow {
+//                content()
+//            }
+//        }
+        CUIChildGeometryReader(id: "id") { proxy in
+            presentFullScreen(
+                isPresented: isPresented,
+                dimmed: dimmed,
+                tapBackgroundToDismiss: tapBackgroundToDismiss,
+                onDismiss: onDismiss
+            ) {
+                ToolTipPresentor(
+                    targetFrame: proxy?.frame(in: .global) ?? .zero,
+                    content: CUIWindow { content() }
+                )
             }
         }
-
-//                .presentFullScreen(
-//                    isPresented: isPresented,
-//                    dimmed: dimmed,
-//                    tapBackgroundToDismiss: tapBackgroundToDismiss,
-//                    onDismiss: onDismiss
-//                ) {
-//                    ToolTipPresentor(
-//                        targetFrame: proxy?.frame(in: .global) ?? .zero,
-//                        content: CUIWindow { content() }
-//                    ).ignoresSafeArea()
-//                }
-//        }
     }
 }
 
@@ -274,7 +274,7 @@ struct ToolTipWrapper<Target, Content>: View where Target: View, Content: View {
 // TODO: Add a way to specify a target edge
 // FIXME: This is working pretty well, still not sure why it's off by about 6 points vertically
 struct ToolTipPresentor<Content>: View where Content: View {
-    let toolTipSpacing: CGFloat = 0 // .standardSpacing
+    let toolTipSpacing: CGFloat = .standardSpacing
     let yAdjustment_FIXME_SHOULD_NOT_BE_NEEDED: CGFloat = 0 // -6
 
     @State
@@ -325,12 +325,14 @@ struct ToolTipPresentor<Content>: View where Content: View {
     }
 
     var body: some View {
-        ZStack(alignment: .topLeading) {
+//        ZStack(alignment: .topLeading) {
             // FIXME: When this is added, it causes the ZStack to shift outside of the frame. Without it the ZStack will not be large enough. Using the rectangle to visualize things.
-            // Spacer()
-            Rectangle()
-                .foregroundColor(.black.opacity(0.2))
-                .frame(width: UIScreen.width, height: UIScreen.height)
+//             Spacer()
+//            Rectangle()
+//                .foregroundColor(.black.opacity(0.2))
+//                .frame(maxWidth: .infinity, maxHeight: .infinity)
+//                .opacity(0)
+//            Color.black.opacity(0.2).ignoresSafeArea()
 
             CUISizeReader(size: $size, id: "1") {
                 content
@@ -338,53 +340,52 @@ struct ToolTipPresentor<Content>: View where Content: View {
             // TODO: Need to take the safe area into account
             // FIXME: Still have no idea why everything is off by a few points (~6 points vertically), and sometimes half points
             // TODO: Do a lot of calculations regarding the frame to decide if the tooltip should be above or below and centered versus off center. Thinking that the arrow will always point to the center top/bottom of the target
-            .offset(
+            .position(
                 x: {
                     let x: CGFloat
 
                     switch targetEdge {
                     case .top: fallthrough
                     case .bottom:
-                        // TODO: need to make sure this can actually fit on screen and adjust if not.
-                        x = targetFrame.minX + (targetFrame.width - size.width) / 2
+                        x = targetFrame.midX
                     case .leading:
-                        x = targetFrame.minX - toolTipSpacing - size.width
+                        x = targetFrame.minX - toolTipSpacing - size.width / 2
                     case .trailing:
-                        x = targetFrame.maxX + toolTipSpacing
+                        x = targetFrame.maxX + toolTipSpacing + size.width / 2
                     }
 
-                    return min(max(x, toolTipSpacing), UIScreen.width - toolTipSpacing - size.width)
+                    return min(max(x, toolTipSpacing + size.width / 2), UIScreen.width - toolTipSpacing - size.width / 2)
                 }(),
                 y: {
                     let y: CGFloat
 
                     switch targetEdge {
                     case .top:
-                        y = targetFrame.minY - toolTipSpacing - size.height
+                        y = targetFrame.minY - toolTipSpacing - size.height  / 2
                     case .bottom:
-                        y = targetFrame.maxY + toolTipSpacing
+                        y = targetFrame.maxY + toolTipSpacing + size.height / 2
                     case .leading: fallthrough
                     case .trailing:
-                        // TODO: need to make sure this can actually fit on screen and adjust if not.
-                        y = targetFrame.minY + (targetFrame.height - size.height) / 2
+                        y = targetFrame.midY
                     }
 
-                    return min(max(y, toolTipSpacing), UIScreen.height - toolTipSpacing - size.height) + yAdjustment_FIXME_SHOULD_NOT_BE_NEEDED
+                    return min(max(y, toolTipSpacing + size.height / 2), UIScreen.height - toolTipSpacing - size.height / 2)
                 }()
             )
+            .ignoresSafeArea()
         }
-        .frame(width: UIScreen.width, height: UIScreen.height)
-        .overlay {
-            VStack {
-                Text(String(format: "origin = (%.0f, %.0f)", targetFrame.minX, targetFrame.minY))
-                Text(String(format: "size = (%.0f, %.0f)", targetFrame.width, targetFrame.height))
-                Text(String(format: "tooltip size = (%.0f, %.0f)", size.width, size.height))
-                Text("\(_targetEdgeString)")
-            }
-            .padding(.standardSpacing)
-            .background(.thinMaterial)
-        }
-    }
+//        .frame(width: UIScreen.width, height: UIScreen.height)
+//        .overlay {
+//            VStack {
+//                Text(String(format: "origin = (%.0f, %.0f)", targetFrame.minX, targetFrame.minY))
+//                Text(String(format: "size = (%.0f, %.0f)", targetFrame.width, targetFrame.height))
+//                Text(String(format: "tooltip size = (%.0f, %.0f)", size.width, size.height))
+//                Text("\(_targetEdgeString)")
+//            }
+//            .padding(.standardSpacing)
+//            .background(.thinMaterial)
+//        }
+//    }
 }
 
 // TODO: This and FullScreenCoverContainer can probably be made in a very generic way. They're both essentially doing the say thing, chaining presenting/dismissing behavior.
@@ -481,7 +482,7 @@ struct PresentWindow_Previews: PreviewProvider {
                         Button("showWindow=\(showFullScreen ? "true" : "false")") {
                             showFullScreen.toggle()
                         }
-//                        .padding()
+                        .padding()
                     }
                 }
             }
@@ -581,7 +582,6 @@ struct PresentToolTip_Previews: PreviewProvider {
                 }
             }
             .padding(.standardSpacing)
-            // FIXME: This case doesn't work.
 //            .previewInterfaceOrientation(.landscapeLeft)
         }
     }
