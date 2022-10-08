@@ -121,26 +121,6 @@ extension View {
     }
 }
 
-// From: https://www.fivestars.blog/articles/reverse-masks-how-to/
-// TODO: Move to view utilities
-public extension View {
-    @inlinable
-    func reverseMask<Mask: View>(
-        alignment: Alignment = .center,
-        @ViewBuilder _ mask: () -> Mask
-    ) -> some View {
-        self.mask {
-            Rectangle()
-//            .frame(width: UIScreen.width, height: UIScreen.height)
-                .ignoresSafeArea()
-                .overlay(alignment: alignment) {
-                    mask()
-                        .blendMode(.destinationOut)
-                }
-        }
-    }
-}
-
 // TODO: Think about moving these presentors to their own files. This one is getting a bit crowded.
 // TODO: Add a proper init
 // TODO: Add a way to specify a target edge
