@@ -41,26 +41,6 @@ struct ToolTipShape: Shape {
         case .top:
             roundedRectFrame = CGRect(
                 x: rect.minX,
-                y: rect.minY + arrowWidth / 2,
-                width: rect.width,
-                height: rect.height - arrowWidth / 2
-            )
-
-            path.move(to: CGPoint(
-                x: roundedRectFrame.midX + arrowOffset,
-                y: roundedRectFrame.minY - arrowWidth / 2
-            ))
-            path.addLine(to: CGPoint(
-                x: roundedRectFrame.midX + arrowOffset - arrowWidth / 2,
-                y: roundedRectFrame.minY
-            ))
-            path.addLine(to: CGPoint(
-                x: roundedRectFrame.midX + arrowOffset + arrowWidth / 2,
-                y: roundedRectFrame.minY
-            ))
-        case .bottom:
-            roundedRectFrame = CGRect(
-                x: rect.minX,
                 y: rect.minY,
                 width: rect.width,
                 height: rect.height - arrowWidth / 2
@@ -78,28 +58,27 @@ struct ToolTipShape: Shape {
                 x: roundedRectFrame.midX + arrowOffset + arrowWidth / 2,
                 y: roundedRectFrame.maxY
             ))
-        case .leading:
+        case .bottom:
             roundedRectFrame = CGRect(
-                x: rect.minX + arrowWidth / 2,
-                y: rect.minY,
-                width: rect.width - arrowWidth / 2,
-                height: rect.height
+                x: rect.minX,
+                y: rect.minY + arrowWidth / 2,
+                width: rect.width,
+                height: rect.height - arrowWidth / 2
             )
 
             path.move(to: CGPoint(
-                x: roundedRectFrame.minX - arrowWidth / 2,
-                y: roundedRectFrame.midY - arrowOffset
+                x: roundedRectFrame.midX + arrowOffset,
+                y: roundedRectFrame.minY - arrowWidth / 2
             ))
             path.addLine(to: CGPoint(
-                x: roundedRectFrame.minX,
-                y: roundedRectFrame.midY - arrowWidth / 2
+                x: roundedRectFrame.midX + arrowOffset - arrowWidth / 2,
+                y: roundedRectFrame.minY
             ))
             path.addLine(to: CGPoint(
-                x: roundedRectFrame.minX,
-                y: roundedRectFrame.midY + arrowWidth / 2
+                x: roundedRectFrame.midX + arrowOffset + arrowWidth / 2,
+                y: roundedRectFrame.minY
             ))
-
-        case .trailing:
+        case .leading:
             roundedRectFrame = CGRect(
                 x: rect.minX,
                 y: rect.minY,
@@ -119,6 +98,26 @@ struct ToolTipShape: Shape {
                 x: roundedRectFrame.maxX,
                 y: roundedRectFrame.midY + arrowWidth / 2
             ))
+        case .trailing:
+            roundedRectFrame = CGRect(
+                x: rect.minX + arrowWidth / 2,
+                y: rect.minY,
+                width: rect.width - arrowWidth / 2,
+                height: rect.height
+            )
+
+            path.move(to: CGPoint(
+                x: roundedRectFrame.minX - arrowWidth / 2,
+                y: roundedRectFrame.midY - arrowOffset
+            ))
+            path.addLine(to: CGPoint(
+                x: roundedRectFrame.minX,
+                y: roundedRectFrame.midY - arrowWidth / 2
+            ))
+            path.addLine(to: CGPoint(
+                x: roundedRectFrame.minX,
+                y: roundedRectFrame.midY + arrowWidth / 2
+            ))
         }
 
         path.closeSubpath()
@@ -134,6 +133,7 @@ struct ToolTipShape: Shape {
 struct ToolTipShape_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
+            // TODO: Maybe recreate this in preview kit as a test background?
             Spacer()
                 .frame(width: UIScreen.width, height: UIScreen.height)
                 .background(.linearGradient(colors: [.red, .blue, .yellow], startPoint: .top, endPoint: .bottom))
