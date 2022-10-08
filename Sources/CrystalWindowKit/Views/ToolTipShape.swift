@@ -88,15 +88,15 @@ struct ToolTipShape: Shape {
 
             path.move(to: CGPoint(
                 x: roundedRectFrame.maxX + arrowWidth / 2,
-                y: roundedRectFrame.midY - arrowOffset
+                y: roundedRectFrame.midY + arrowOffset
             ))
             path.addLine(to: CGPoint(
                 x: roundedRectFrame.maxX,
-                y: roundedRectFrame.midY - arrowWidth / 2
+                y: roundedRectFrame.midY + arrowOffset - arrowWidth / 2
             ))
             path.addLine(to: CGPoint(
                 x: roundedRectFrame.maxX,
-                y: roundedRectFrame.midY + arrowWidth / 2
+                y: roundedRectFrame.midY + arrowOffset + arrowWidth / 2
             ))
         case .trailing:
             roundedRectFrame = CGRect(
@@ -108,15 +108,15 @@ struct ToolTipShape: Shape {
 
             path.move(to: CGPoint(
                 x: roundedRectFrame.minX - arrowWidth / 2,
-                y: roundedRectFrame.midY - arrowOffset
+                y: roundedRectFrame.midY + arrowOffset
             ))
             path.addLine(to: CGPoint(
                 x: roundedRectFrame.minX,
-                y: roundedRectFrame.midY - arrowWidth / 2
+                y: roundedRectFrame.midY + arrowOffset - arrowWidth / 2
             ))
             path.addLine(to: CGPoint(
                 x: roundedRectFrame.minX,
-                y: roundedRectFrame.midY + arrowWidth / 2
+                y: roundedRectFrame.midY + arrowOffset + arrowWidth / 2
             ))
         }
 
@@ -139,41 +139,124 @@ struct ToolTipShape_Previews: PreviewProvider {
                 .background(.linearGradient(colors: [.red, .blue, .yellow], startPoint: .top, endPoint: .bottom))
 
             VStack(spacing: .standardSpacing * 2) {
-                ToolTipShape(
-                    presentationDirection: .top,
-                    arrowWidth: .standardSpacing * 2,
-                    arrowOffset: 0,
-                    cornerRadius: .cornerRadius
-                )
-                .frame(width: 100, height: 50)
-                .foregroundStyle(.thinMaterial)
+                HStack {
 
-                ToolTipShape(
-                    presentationDirection: .bottom,
-                    arrowWidth: .standardSpacing * 2,
-                    arrowOffset: 0,
-                    cornerRadius: .cornerRadius
-                )
-                .frame(width: 100, height: 50)
-                .foregroundStyle(.thinMaterial)
 
-                ToolTipShape(
-                    presentationDirection: .leading,
-                    arrowWidth: .standardSpacing * 2,
-                    arrowOffset: 0,
-                    cornerRadius: .cornerRadius
-                )
-                .frame(width: 100, height: 50)
-                .foregroundStyle(.thinMaterial)
+                    ToolTipShape(
+                        presentationDirection: .top,
+                        arrowWidth: .standardSpacing * 2,
+                        arrowOffset: 20,
+                        cornerRadius: .cornerRadius
+                    )
+                    .frame(width: 100, height: 50)
+                    .foregroundStyle(.thinMaterial)
 
-                ToolTipShape(
-                    presentationDirection: .trailing,
-                    arrowWidth: .standardSpacing * 2,
-                    arrowOffset: 0,
-                    cornerRadius: .cornerRadius
-                )
-                .frame(width: 100, height: 50)
-                .foregroundStyle(.thinMaterial)
+                    ToolTipShape(
+                        presentationDirection: .top,
+                        arrowWidth: .standardSpacing * 2,
+                        arrowOffset: 0,
+                        cornerRadius: .cornerRadius
+                    )
+                    .frame(width: 100, height: 50)
+                    .foregroundStyle(.thinMaterial)
+
+                    ToolTipShape(
+                        presentationDirection: .top,
+                        arrowWidth: .standardSpacing * 2,
+                        arrowOffset: -20,
+                        cornerRadius: .cornerRadius
+                    )
+                    .frame(width: 100, height: 50)
+                    .foregroundStyle(.thinMaterial)
+                }
+
+                HStack {
+                    ToolTipShape(
+                        presentationDirection: .bottom,
+                        arrowWidth: .standardSpacing * 2,
+                        arrowOffset: 20,
+                        cornerRadius: .cornerRadius
+                    )
+                    .frame(width: 100, height: 50)
+                    .foregroundStyle(.thinMaterial)
+
+                    ToolTipShape(
+                        presentationDirection: .bottom,
+                        arrowWidth: .standardSpacing * 2,
+                        arrowOffset: 0,
+                        cornerRadius: .cornerRadius
+                    )
+                    .frame(width: 100, height: 50)
+                    .foregroundStyle(.thinMaterial)
+
+                    ToolTipShape(
+                        presentationDirection: .bottom,
+                        arrowWidth: .standardSpacing * 2,
+                        arrowOffset: -20,
+                        cornerRadius: .cornerRadius
+                    )
+                    .frame(width: 100, height: 50)
+                    .foregroundStyle(.thinMaterial)
+                }
+
+
+                HStack {
+                    ToolTipShape(
+                        presentationDirection: .leading,
+                        arrowWidth: .standardSpacing * 2,
+                        arrowOffset: 10,
+                        cornerRadius: .cornerRadius
+                    )
+                    .frame(width: 100, height: 50)
+                    .foregroundStyle(.thinMaterial)
+
+                    ToolTipShape(
+                        presentationDirection: .leading,
+                        arrowWidth: .standardSpacing * 2,
+                        arrowOffset: 0,
+                        cornerRadius: .cornerRadius
+                    )
+                    .frame(width: 100, height: 50)
+                    .foregroundStyle(.thinMaterial)
+
+                    ToolTipShape(
+                        presentationDirection: .leading,
+                        arrowWidth: .standardSpacing * 2,
+                        arrowOffset: -10,
+                        cornerRadius: .cornerRadius
+                    )
+                    .frame(width: 100, height: 50)
+                    .foregroundStyle(.thinMaterial)
+                }
+
+                HStack {
+                    ToolTipShape(
+                        presentationDirection: .trailing,
+                        arrowWidth: .standardSpacing * 2,
+                        arrowOffset: 10,
+                        cornerRadius: .cornerRadius
+                    )
+                    .frame(width: 100, height: 50)
+                    .foregroundStyle(.thinMaterial)
+
+                    ToolTipShape(
+                        presentationDirection: .trailing,
+                        arrowWidth: .standardSpacing * 2,
+                        arrowOffset: 0,
+                        cornerRadius: .cornerRadius
+                    )
+                    .frame(width: 100, height: 50)
+                    .foregroundStyle(.thinMaterial)
+
+                    ToolTipShape(
+                        presentationDirection: .trailing,
+                        arrowWidth: .standardSpacing * 2,
+                        arrowOffset: -10,
+                        cornerRadius: .cornerRadius
+                    )
+                    .frame(width: 100, height: 50)
+                    .foregroundStyle(.thinMaterial)
+                }
             }
         }
     }
