@@ -66,10 +66,50 @@ extension View {
         CUIChildGeometryReader(id: "id") { proxy in
             presentFullScreen(
                 isPresented: isPresented,
-                dimmed: dimmed,
+                // This has custom dimming
+                dimmed: false,
                 tapBackgroundToDismiss: tapBackgroundToDismiss,
                 onDismiss: onDismiss
             ) {
+                if dimmed {
+                    Color.black
+                        .frame(width: UIScreen.width, height: UIScreen.height)
+                        .opacity(0.2)
+                        .ignoresSafeArea()
+                        .reverseMask {
+                            self
+                                .position(
+                                    x: {
+                                        guard let frame = proxy?.frame(in: .global) else {
+                                            return 0
+                                        }
+
+                                        return frame.midX
+                                    }(),
+                                    y: {
+                                        guard let frame = proxy?.frame(in: .global) else {
+                                            return 0
+                                        }
+
+                                        return frame.midY
+                                    }()
+                                )
+                                .ignoresSafeArea()
+
+                            ToolTipPresentor(
+                                targetFrame: proxy?.frame(in: .global) ?? .zero,
+                                presentationEdge: presentationEdge
+                            ) {
+                                CUIWindow { content() }
+                            }
+                        }
+                        .onTapGesture {
+                            withoutAnimation {
+                                isPresented.wrappedValue = false
+                            }
+                        }
+                }
+
                 ToolTipPresentor(
                     targetFrame: proxy?.frame(in: .global) ?? .zero,
                     presentationEdge: presentationEdge
@@ -77,6 +117,26 @@ extension View {
                     CUIWindow { content() }
                 }
             }
+        }
+    }
+}
+
+// From: https://www.fivestars.blog/articles/reverse-masks-how-to/
+// TODO: Move to view utilities
+public extension View {
+    @inlinable
+    func reverseMask<Mask: View>(
+        alignment: Alignment = .center,
+        @ViewBuilder _ mask: () -> Mask
+    ) -> some View {
+        self.mask {
+            Rectangle()
+//            .frame(width: UIScreen.width, height: UIScreen.height)
+                .ignoresSafeArea()
+                .overlay(alignment: alignment) {
+                    mask()
+                        .blendMode(.destinationOut)
+                }
         }
     }
 }
@@ -508,7 +568,6 @@ struct PresentToolTipForcedEdges_Previews: PreviewProvider {
 
     static var previews: some View {
         Preview()
-
     }
 }
 
