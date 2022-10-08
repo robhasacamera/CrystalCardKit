@@ -27,7 +27,7 @@
 import SwiftUI
 
 struct ToolTipShape: Shape {
-    var presentationDirection: Edge
+    var presentationEdge: Edge
     var arrowWidth: CGFloat
     var arrowOffset: CGFloat
     var cornerRadius: CGFloat
@@ -37,7 +37,7 @@ struct ToolTipShape: Shape {
 
         let roundedRectFrame: CGRect
 
-        switch presentationDirection {
+        switch presentationEdge {
         case .top:
             roundedRectFrame = CGRect(
                 x: rect.minX,
@@ -143,7 +143,7 @@ struct ToolTipShape_Previews: PreviewProvider {
 
 
                     ToolTipShape(
-                        presentationDirection: .top,
+                        presentationEdge: .top,
                         arrowWidth: .standardSpacing * 2,
                         arrowOffset: 20,
                         cornerRadius: .cornerRadius
@@ -152,7 +152,7 @@ struct ToolTipShape_Previews: PreviewProvider {
                     .foregroundStyle(.thinMaterial)
 
                     ToolTipShape(
-                        presentationDirection: .top,
+                        presentationEdge: .top,
                         arrowWidth: .standardSpacing * 2,
                         arrowOffset: 0,
                         cornerRadius: .cornerRadius
@@ -161,7 +161,7 @@ struct ToolTipShape_Previews: PreviewProvider {
                     .foregroundStyle(.thinMaterial)
 
                     ToolTipShape(
-                        presentationDirection: .top,
+                        presentationEdge: .top,
                         arrowWidth: .standardSpacing * 2,
                         arrowOffset: -20,
                         cornerRadius: .cornerRadius
@@ -172,7 +172,7 @@ struct ToolTipShape_Previews: PreviewProvider {
 
                 HStack {
                     ToolTipShape(
-                        presentationDirection: .bottom,
+                        presentationEdge: .bottom,
                         arrowWidth: .standardSpacing * 2,
                         arrowOffset: 20,
                         cornerRadius: .cornerRadius
@@ -181,7 +181,7 @@ struct ToolTipShape_Previews: PreviewProvider {
                     .foregroundStyle(.thinMaterial)
 
                     ToolTipShape(
-                        presentationDirection: .bottom,
+                        presentationEdge: .bottom,
                         arrowWidth: .standardSpacing * 2,
                         arrowOffset: 0,
                         cornerRadius: .cornerRadius
@@ -190,7 +190,7 @@ struct ToolTipShape_Previews: PreviewProvider {
                     .foregroundStyle(.thinMaterial)
 
                     ToolTipShape(
-                        presentationDirection: .bottom,
+                        presentationEdge: .bottom,
                         arrowWidth: .standardSpacing * 2,
                         arrowOffset: -20,
                         cornerRadius: .cornerRadius
@@ -202,7 +202,7 @@ struct ToolTipShape_Previews: PreviewProvider {
 
                 HStack {
                     ToolTipShape(
-                        presentationDirection: .leading,
+                        presentationEdge: .leading,
                         arrowWidth: .standardSpacing * 2,
                         arrowOffset: 10,
                         cornerRadius: .cornerRadius
@@ -211,7 +211,7 @@ struct ToolTipShape_Previews: PreviewProvider {
                     .foregroundStyle(.thinMaterial)
 
                     ToolTipShape(
-                        presentationDirection: .leading,
+                        presentationEdge: .leading,
                         arrowWidth: .standardSpacing * 2,
                         arrowOffset: 0,
                         cornerRadius: .cornerRadius
@@ -220,7 +220,7 @@ struct ToolTipShape_Previews: PreviewProvider {
                     .foregroundStyle(.thinMaterial)
 
                     ToolTipShape(
-                        presentationDirection: .leading,
+                        presentationEdge: .leading,
                         arrowWidth: .standardSpacing * 2,
                         arrowOffset: -10,
                         cornerRadius: .cornerRadius
@@ -231,7 +231,7 @@ struct ToolTipShape_Previews: PreviewProvider {
 
                 HStack {
                     ToolTipShape(
-                        presentationDirection: .trailing,
+                        presentationEdge: .trailing,
                         arrowWidth: .standardSpacing * 2,
                         arrowOffset: 10,
                         cornerRadius: .cornerRadius
@@ -240,7 +240,7 @@ struct ToolTipShape_Previews: PreviewProvider {
                     .foregroundStyle(.thinMaterial)
 
                     ToolTipShape(
-                        presentationDirection: .trailing,
+                        presentationEdge: .trailing,
                         arrowWidth: .standardSpacing * 2,
                         arrowOffset: 0,
                         cornerRadius: .cornerRadius
@@ -249,7 +249,7 @@ struct ToolTipShape_Previews: PreviewProvider {
                     .foregroundStyle(.thinMaterial)
 
                     ToolTipShape(
-                        presentationDirection: .trailing,
+                        presentationEdge: .trailing,
                         arrowWidth: .standardSpacing * 2,
                         arrowOffset: -10,
                         cornerRadius: .cornerRadius

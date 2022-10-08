@@ -29,9 +29,10 @@ import CrystalViewUtilities
 import SwiftUI
 
 // TODO: Create a new _interface for tooltips
-public struct CUIToolTip<Icon, Content>: _CUIStylizedWindow where Icon: View, Content: View {
+public struct CUIToolTip<Icon, Content>: CUIStylizedToolTip, _CUIStylizedWindow where Icon: View, Content: View {
     public typealias Control = CUIToolTip<Icon, Content>
     public typealias Window = CUIToolTip<Icon, Content>
+    public typealias ToolTip = CUIToolTip<Icon, Content>
 
     public var control: CUIWindow<Icon, Content>
     var presentationEdge: Edge
@@ -59,7 +60,13 @@ public struct CUIToolTip<Icon, Content>: _CUIStylizedWindow where Icon: View, Co
     public var body: some View {
         control
             .padding(presentationEdge.inverted, arrowWidth / 2)
-            .background(ToolTipShape(presentationDirection: presentationEdge, arrowWidth: .standardSpacing * 2, arrowOffset: 0, cornerRadius: .cornerRadius)
+            .background(
+                ToolTipShape(
+                    presentationEdge: presentationEdge,
+                    arrowWidth: .standardSpacing * 2,
+                    arrowOffset: arrowOffset,
+                    cornerRadius: .cornerRadius
+                )
                 .foregroundStyle(.thinMaterial))
     }
 }
@@ -122,6 +129,8 @@ struct SwiftUIView_Previews: PreviewProvider {
                     Text("I'm a tooltip")
                         .padding()
                 }
+                .arrowOffset(20)
+                
                 CUIToolTip(presentationEdge: .bottom) {
                     Text("I'm a tooltip")
                         .padding()
