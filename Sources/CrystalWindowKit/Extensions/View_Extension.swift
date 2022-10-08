@@ -96,6 +96,7 @@ struct ToolTipPresentor<Content>: View where Content: View {
     }
 
     let toolTipSpacing: CGFloat = .standardSpacing
+    let toolTipArrowSize: CGFloat = .standardSpacing * 2
 
     @State
     var size: CGSize = .zero
@@ -151,9 +152,9 @@ struct ToolTipPresentor<Content>: View where Content: View {
                 case .bottom:
                     x = targetFrame.midX
                 case .leading:
-                    x = targetFrame.minX - toolTipSpacing - size.width / 2
+                    x = targetFrame.minX - toolTipArrowSize - size.width / 2
                 case .trailing:
-                    x = targetFrame.maxX + toolTipSpacing + size.width / 2
+                    x = targetFrame.maxX + toolTipArrowSize + size.width / 2
                 }
 
                 return min(max(x, toolTipSpacing + size.width / 2), UIScreen.width - toolTipSpacing - size.width / 2)
@@ -163,9 +164,9 @@ struct ToolTipPresentor<Content>: View where Content: View {
 
                 switch targetEdge {
                 case .top:
-                    y = targetFrame.minY - toolTipSpacing - size.height / 2
+                    y = targetFrame.minY - toolTipArrowSize - size.height / 2
                 case .bottom:
-                    y = targetFrame.maxY + toolTipSpacing + size.height / 2
+                    y = targetFrame.maxY + toolTipArrowSize + size.height / 2
                 case .leading: fallthrough
                 case .trailing:
                     y = targetFrame.midY
@@ -178,10 +179,10 @@ struct ToolTipPresentor<Content>: View where Content: View {
 
         ToolTipArrow(
             toolTipDirection: targetEdge,
-            toolTipSpacing: toolTipSpacing
+            toolTipSpacing: toolTipArrowSize
         )
         .foregroundStyle(.ultraThinMaterial)
-        .frame(width: toolTipSpacing, height: toolTipSpacing)
+        .frame(width: toolTipArrowSize, height: toolTipArrowSize)
         .position(
             x: {
                 let x: CGFloat
@@ -191,21 +192,21 @@ struct ToolTipPresentor<Content>: View where Content: View {
                 case .bottom:
                     x = targetFrame.midX
                 case .leading:
-                    x = targetFrame.minX - toolTipSpacing / 2
+                    x = targetFrame.minX - toolTipArrowSize / 2
                 case .trailing:
-                    x = targetFrame.maxX + toolTipSpacing / 2
+                    x = targetFrame.maxX + toolTipArrowSize / 2
                 }
 
-                return min(max(x, toolTipSpacing + toolTipSpacing / 2), UIScreen.width - toolTipSpacing - toolTipSpacing / 2)
+                return min(max(x, toolTipSpacing + toolTipArrowSize / 2), UIScreen.width - toolTipSpacing - toolTipArrowSize / 2)
             }(),
             y: {
                 let y: CGFloat
 
                 switch targetEdge {
                 case .top:
-                    y = targetFrame.minY - toolTipSpacing / 2
+                    y = targetFrame.minY - toolTipArrowSize / 2
                 case .bottom:
-                    y = targetFrame.maxY + toolTipSpacing / 2
+                    y = targetFrame.maxY + toolTipArrowSize / 2
                 case .leading: fallthrough
                 case .trailing:
                     y = targetFrame.midY
@@ -435,64 +436,70 @@ struct PresentToolTipForcedEdges_Previews: PreviewProvider {
         var showBottom = false
 
         var body: some View {
-            VStack {
-                CUIButton(title: "leading") {
-                    showLeading.toggle()
-                }
-                .presentToolTip(
-                    isPresented: $showLeading,
-                    presentationEdge: .leading
-                ) {
-                    ZStack {
-                        Button("hide tooltip") {
-                            showLeading.toggle()
-                        }
-                        .padding()
-                    }
-                }
+            ZStack {
+                Spacer()
+                    .frame(width: UIScreen.width, height: UIScreen.height)
+                    .background(.linearGradient(colors: [.red, .blue, .yellow], startPoint: .top, endPoint: .bottom))
 
-                CUIButton(title: "trailing") {
-                    showTrailing.toggle()
-                }
-                .presentToolTip(
-                    isPresented: $showTrailing,
-                    presentationEdge: .trailing
-                ) {
-                    ZStack {
-                        Button("hide tooltip") {
-                            showTrailing.toggle()
-                        }
-                        .padding()
+                VStack {
+                    CUIButton(title: "leading") {
+                        showLeading.toggle()
                     }
-                }
-
-                CUIButton(title: "top") {
-                    showTop.toggle()
-                }
-                .presentToolTip(
-                    isPresented: $showTop,
-                    presentationEdge: .top
-                ) {
-                    ZStack {
-                        Button("hide tooltip") {
-                            showTop.toggle()
+                    .presentToolTip(
+                        isPresented: $showLeading,
+                        presentationEdge: .leading
+                    ) {
+                        ZStack {
+                            Button("hide tooltip") {
+                                showLeading.toggle()
+                            }
+                            .padding()
                         }
-                        .padding()
                     }
-                }
 
-                CUIButton(title: "bottom") {
-                    showBottom.toggle()
-                }
-                .presentToolTip(
-                    isPresented: $showBottom,
-                    presentationEdge: .bottom
-                ) {
-                    ZStack {
-                        Button("hide tooltip") {
-                            showBottom.toggle()
+                    CUIButton(title: "trailing") {
+                        showTrailing.toggle()
+                    }
+                    .presentToolTip(
+                        isPresented: $showTrailing,
+                        presentationEdge: .trailing
+                    ) {
+                        ZStack {
+                            Button("hide tooltip") {
+                                showTrailing.toggle()
+                            }
+                            .padding()
                         }
-                        .padding()
+                    }
+
+                    CUIButton(title: "top") {
+                        showTop.toggle()
+                    }
+                    .presentToolTip(
+                        isPresented: $showTop,
+                        presentationEdge: .top
+                    ) {
+                        ZStack {
+                            Button("hide tooltip") {
+                                showTop.toggle()
+                            }
+                            .padding()
+                        }
+                    }
+
+                    CUIButton(title: "bottom") {
+                        showBottom.toggle()
+                    }
+                    .presentToolTip(
+                        isPresented: $showBottom,
+                        presentationEdge: .bottom
+                    ) {
+                        ZStack {
+                            Button("hide tooltip") {
+                                showBottom.toggle()
+                            }
+                            .padding()
+                        }
                     }
                 }
             }
@@ -501,6 +508,7 @@ struct PresentToolTipForcedEdges_Previews: PreviewProvider {
 
     static var previews: some View {
         Preview()
+
     }
 }
 
