@@ -28,7 +28,7 @@ import CrystalButtonKit
 import CrystalViewUtilities
 import SwiftUI
 
-// TODO: Create a new _interface for tooltips
+// TODO: Document
 public struct CUIToolTip<Icon, Content>: CUIStylizedToolTip, _CUIStylizedWindow where Icon: View, Content: View {
     public typealias Control = CUIToolTip<Icon, Content>
     public typealias Window = CUIToolTip<Icon, Content>
@@ -40,6 +40,7 @@ public struct CUIToolTip<Icon, Content>: CUIStylizedToolTip, _CUIStylizedWindow 
     var arrowWidth: CGFloat = .standardSpacing * 2
     var arrowOffset: CGFloat = 0
 
+    // TODO: Update documentation.
     /// Creates a window using the icon and the content provided.
     /// - Parameters:
     ///   - icon: View that is displayed as an icon.

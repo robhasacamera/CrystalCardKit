@@ -32,6 +32,7 @@ import SwiftUI
 
 extension View {
     // TODO: Document
+    // TODO: Add option to style the window
     func presentWindow<Content>(
         isPresented: Binding<Bool>,
         dimmed: Bool = true,
@@ -52,8 +53,7 @@ extension View {
     }
 
     // TODO: Document
-    // TODO: Add option to force an edge to be used.
-    // TODO: Add pointer option
+    // TODO: Add option to style the tooltip
     func presentToolTip<Content>(
         isPresented: Binding<Bool>,
         presentationEdge: Edge? = nil,
