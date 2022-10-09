@@ -31,8 +31,10 @@ protocol CUIStylizedToolTip: CUIStylizedWindow where Control == ToolTip {
     associatedtype ToolTip: CUIStylizedToolTip
 
     var arrowOffset: CGFloat { get set }
+    var arrowWidth: CGFloat { get set }
 
     func arrowOffset(_ offset: CGFloat) -> ToolTip
+    func arrowWidth(_ width: CGFloat) -> ToolTip
 }
 
 extension CUIStylizedToolTip {
@@ -40,6 +42,14 @@ extension CUIStylizedToolTip {
         var newSelf = self
 
         newSelf.arrowOffset = offset
+
+        return newSelf as! Self.ToolTip
+    }
+
+    func arrowWidth(_ width: CGFloat) -> ToolTip {
+        var newSelf = self
+
+        newSelf.arrowWidth = width
 
         return newSelf as! Self.ToolTip
     }

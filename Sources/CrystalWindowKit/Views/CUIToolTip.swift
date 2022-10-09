@@ -63,7 +63,7 @@ public struct CUIToolTip<Icon, Content>: CUIStylizedToolTip, _CUIStylizedWindow 
             .background(
                 ToolTipShape(
                     presentationEdge: presentationEdge,
-                    arrowWidth: .standardSpacing * 2,
+                    arrowWidth: arrowWidth,
                     arrowOffset: arrowOffset,
                     cornerRadius: .cornerRadius
                 )

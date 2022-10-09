@@ -122,8 +122,6 @@ extension View {
 }
 
 // TODO: Think about moving these presentors to their own files. This one is getting a bit crowded.
-// TODO: Add a proper init
-// TODO: Add a way to specify a target edge
 struct ToolTipPresentor<Content>: View where Content: View {
     internal init(
         targetFrame: CGRect,
@@ -136,7 +134,7 @@ struct ToolTipPresentor<Content>: View where Content: View {
     }
 
     let toolTipSpacing: CGFloat = .standardSpacing
-    let toolTipArrowSize: CGFloat = .standardSpacing * 2
+    var toolTipArrowSize: CGFloat { toolTipSpacing * 2 }
 
     @State
     var size: CGSize = .zero
@@ -198,6 +196,7 @@ struct ToolTipPresentor<Content>: View where Content: View {
                 return targetFrame.minY - toolTipMidY
             }
         }())
+        .arrowWidth(toolTipArrowSize)
         .position(
             // FIXME: If I move this into a var, the build never finishes
             // TODO: Need to take the safe area into account
