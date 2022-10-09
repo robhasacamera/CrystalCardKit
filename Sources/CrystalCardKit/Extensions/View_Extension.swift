@@ -31,17 +31,16 @@ import SwiftUI
 #if os(iOS)
 
 extension View {
-    // TODO: Document
     // TODO: Add option to style the window
-    /// Presents a window over the top of the current
+    /// Presents a card on top of the view heirarchy with the content provided/
+    ///
     /// - Parameters:
-    ///   - isPresented: <#isPresented description#>
-    ///   - dimmed: <#dimmed description#>
-    ///   - tapBackgroundToDismiss: <#tapBackgroundToDismiss description#>
-    ///   - onDismiss: <#onDismiss description#>
-    ///   - content: <#content description#>
-    /// - Returns: <#description#>
-    func presentWindow<Content>(
+    ///   - isPresented: A binding to a Boolean value that determines whether to present the card.
+    ///   - dimmed: A Boolean that indicates whether the background should be dimmed with a transparent color. Default value is `true`.
+    ///   - tapBackgroundToDismiss: A Boolean to indicate if the tapping the background should dismiss thecard. Default value is `true`. If this is set to `false`, you will still not be able to interact with the views behind the presented card, even when fully visible.
+    ///   - onDismiss: The closure to execute when dismissing the card.
+    ///   - content: The content to display within the card.
+    func presentCard<Content>(
         isPresented: Binding<Bool>,
         dimmed: Bool = true,
         tapBackgroundToDismiss: Bool = true,
@@ -60,8 +59,18 @@ extension View {
         }
     }
 
-    // TODO: Document
     // TODO: Add option to style the tooltip
+    /// Presents a tooltip anchored to the this view.
+    ///
+    /// When presented, the tooltip will be anchored and pointed to this view.
+    ///
+    /// - Parameters:
+    ///   - isPresented: A binding to a Boolean value that determines whether to present the tooltip.
+    ///   - presentationEdge: The edge that the tooltip will be presented from. When set, the tooltip will be displayed along the provided edge, regardless of the available room. When `nil`, the tooltip will default to `.top`, unless there is not enough room available above the target view `.bottom` will be used instead.
+    ///   - dimmed: A Boolean that indicates whether the background should be dimmed with a transparent color. Default value is `true`. When dimmed, this view will be excluded from being dimmed.
+    ///   - tapBackgroundToDismiss: A Boolean to indicate if the tapping the background should dismiss the tooltip. Default value is `true`. If this is set to `false`, you will still not be able to interact with the views behind the presented tooltip, even when fully visible.
+    ///   - onDismiss: The closure to execute when dismissing the tooltip.
+    ///   - content: The content to display within the tooltip.
     func presentToolTip<Content>(
         isPresented: Binding<Bool>,
         presentationEdge: Edge? = nil,
@@ -129,7 +138,7 @@ extension View {
     }
 }
 
-struct PresentWindow_Previews: PreviewProvider {
+struct PresentCard_Previews: PreviewProvider {
     struct Preview: View {
         @State
         var showFullScreen = false
@@ -140,7 +149,7 @@ struct PresentWindow_Previews: PreviewProvider {
                 Button("showWindow=\(showFullScreen ? "true" : "false")") {
                     showFullScreen.toggle()
                 }
-                .presentWindow(isPresented: $showFullScreen) {
+                .presentCard(isPresented: $showFullScreen) {
                     ZStack {
                         Button("showWindow=\(showFullScreen ? "true" : "false")") {
                             showFullScreen.toggle()

@@ -27,17 +27,30 @@
 import CrystalButtonKit
 import SwiftUI
 
-protocol CUIStylizedToolTip: CUIStylizedWindow where Control == ToolTip {
+public protocol CUIStylizedToolTip: CUIStylizedWindow where Control == ToolTip {
     associatedtype ToolTip: CUIStylizedToolTip
 
     var arrowOffset: CGFloat { get set }
     var arrowWidth: CGFloat { get set }
 
+    /// Sets the offset for the arrow from center.
+    ///
+    /// The arrow defaults to the center of the tooltip.
+    /// - Parameter offset: The offset to move the arrow from center.
+    ///     A postive offset will more the arrow towards the leading side when using a vertical presentation edge.
+    ///     A postive offset will more the arrow towards the top side when using a horizontal presentation edge.
+    /// - Returns: Tooltip with the arrow offset from center
     func arrowOffset(_ offset: CGFloat) -> ToolTip
+
+    /// Sets the width of the tooltip.
+    ///
+    /// The arrow's height will be half of the provided with.
+    /// - Parameter width: The width for the arrow to be displayed.
+    /// - Returns: Tooltip with the arrow adjusted to the provided width.
     func arrowWidth(_ width: CGFloat) -> ToolTip
 }
 
-extension CUIStylizedToolTip {
+public extension CUIStylizedToolTip {
     func arrowOffset(_ offset: CGFloat) -> ToolTip {
         var newSelf = self
 

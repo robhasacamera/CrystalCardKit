@@ -28,25 +28,26 @@ import CrystalButtonKit
 import CrystalViewUtilities
 import SwiftUI
 
-// TODO: Document
+/// A stylized tooltip that displays some content and has an arrow that can point towards content.
+///
+/// This is a wrapper for ``CUICard`` that provides an options to display an arrow.
 public struct CUIToolTip<Icon, Content>: CUIStylizedToolTip, _CUIStylizedCard where Icon: View, Content: View {
     public typealias Control = CUIToolTip<Icon, Content>
     public typealias Card = CUIToolTip<Icon, Content>
-    public typealias ToolTip = CUIToolTip<Icon, Content>
 
     public var control: CUICard<Icon, Content>
     var presentationEdge: Edge
 
-    var arrowWidth: CGFloat = .standardSpacing * 2
-    var arrowOffset: CGFloat = 0
+    public var arrowWidth: CGFloat = .standardSpacing * 2
+    public var arrowOffset: CGFloat = 0
 
-    // TODO: Update documentation.
-    /// Creates a window using the icon and the content provided.
+    /// Creates a tooltip using the icon and the content provided.
+    ///
     /// - Parameters:
+    ///   - presentationEdge: The edge that the tooltip will be presented from. The inverted edge will display the arrow.
     ///   - icon: View that is displayed as an icon.
-    ///   - content: The content that will be displayed when the button is expanded.
-    ///   - closeAction: Action that will be performed when the close button is pressed.
-    ///         If this action is not provided, the close button will not be shown.
+    ///   - content: The content that will be displayed in the tooltip.
+    ///   - closeAction: Action that will be performed when the close button is pressed. If an action is not provided, the close button will not be shown.
     public init(
         presentationEdge: Edge,
         @ViewBuilder icon: () -> Icon,
@@ -73,6 +74,14 @@ public struct CUIToolTip<Icon, Content>: CUIStylizedToolTip, _CUIStylizedCard wh
 }
 
 public extension CUIToolTip where Icon == EmptyView {
+    /// Creates a tooltip using the content provided.
+    ///
+    /// The header for this
+    ///
+    /// - Parameters:
+    ///   - presentationEdge: The edge that the tooltip will be presented from. The inverted edge will display the arrow.
+    ///   - content: The content that will be displayed in the tooltip.
+    ///   - closeAction: Action that will be performed when the close button is pressed. If an action is not provided, the close button will not be shown.
     init(
         presentationEdge: Edge,
         @ViewBuilder content: () -> Content,
@@ -131,7 +140,7 @@ struct SwiftUIView_Previews: PreviewProvider {
                         .padding()
                 }
                 .arrowOffset(20)
-                
+
                 CUIToolTip(presentationEdge: .bottom) {
                     Text("I'm a tooltip")
                         .padding()

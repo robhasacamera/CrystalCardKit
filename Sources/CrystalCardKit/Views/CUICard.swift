@@ -29,15 +29,14 @@ import CrystalButtonKit
 import CrystalViewUtilities
 import SwiftUI
 
-// TODO: Need to think through this one a bit. How do I make it easy to display/dismiss the window? Maybe this component is just a base for other components, could use it to build floating window. Or a window presented from an anchor. 
-/// A stylized window that displays some content and provides a control for closing.
+/// A stylized card that displays some content and provides a control for closing.
 public struct CUICard<Icon, Content>: _CUIStylizedCard where Icon: View, Content: View {
     public typealias Control = CUICard<Icon, Content>
     public typealias Card = CUICard<Icon, Content>
 
     public var control: CUIExpandableButton<Icon, Content>
 
-    /// Creates a window using the icon and the content provided.
+    /// Creates a card using the icon and the content provided.
     /// - Parameters:
     ///   - icon: View that is displayed as an icon.
     ///   - content: The content that will be displayed when the button is expanded.
@@ -63,7 +62,7 @@ public struct CUICard<Icon, Content>: _CUIStylizedCard where Icon: View, Content
 }
 
 public extension CUICard where Icon == CUISFSymbolIcon {
-    /// Creates window, using a SF Symbol as the icon and the content provided.
+    /// Creates card, using a SF Symbol as the icon and the content provided.
     /// - Parameters:
     ///   - sfSymbolName: The name of the SF Symbol to use as the icon.
     ///   - content: The content that will be displayed when the button is expanded.
@@ -85,7 +84,7 @@ public extension CUICard where Icon == CUISFSymbolIcon {
 }
 
 public extension CUICard where Icon == EmptyView {
-    /// Creates window, using the content provide.
+    /// Creates card, using the content provide.
     ///
     /// This is a conveneince constructor that creates a window without a header.
     /// - Parameters:
@@ -104,7 +103,7 @@ public extension CUICard where Icon == EmptyView {
     }
 }
 
-struct CUIWindow_Previews: PreviewProvider {
+struct CUICard_Previews: PreviewProvider {
     static var previews: some View {
         CUICenteredPreview(title: "CUIWindow") {
             VStack {
