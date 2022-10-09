@@ -74,7 +74,7 @@ extension View {
                 if dimmed {
                     Color.black
                         .frame(width: UIScreen.width, height: UIScreen.height)
-                        .opacity(0.2)
+                        .opacity(0.5)
                         .ignoresSafeArea()
                         .reverseMask {
                             self
@@ -100,11 +100,11 @@ extension View {
                                 targetFrame: proxy?.frame(in: .global) ?? .zero,
                                 presentationEdge: presentationEdge
                             ) {
-                                CUIWindow { content() }
+                                content()
                             }
                         }
                         .onTapGesture {
-                            withoutAnimation {
+                            if tapBackgroundToDismiss {
                                 isPresented.wrappedValue = false
                             }
                         }
