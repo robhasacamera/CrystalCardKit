@@ -114,7 +114,7 @@ extension View {
                     targetFrame: proxy?.frame(in: .global) ?? .zero,
                     presentationEdge: presentationEdge
                 ) {
-                    CUIWindow { content() }
+                    content()
                 }
             }
         }
@@ -179,11 +179,28 @@ struct ToolTipPresentor<Content>: View where Content: View {
 
     // Add animation to scale from center of target
     var body: some View {
-        CUISizeReader(size: $size, id: "ToolTipContent") {
-            content
+        CUIToolTip(presentationEdge: targetEdge) {
+            CUISizeReader(size: $size, id: "ToolTipContent") {
+                content
+            }
         }
-        // TODO: Need to take the safe area into account
+        .arrowOffset({
+            switch targetEdge {
+            case .top: fallthrough
+            case .bottom:
+                let toolTipMidX = min(max(targetFrame.midX, toolTipSpacing + size.width / 2), UIScreen.width - toolTipSpacing - size.width / 2)
+
+                return targetFrame.midX - toolTipMidX
+            case .leading: fallthrough
+            case .trailing:
+                let toolTipMidY = min(max(targetFrame.minY, toolTipSpacing + size.height / 2), UIScreen.height - toolTipSpacing - size.height / 2)
+
+                return targetFrame.minY - toolTipMidY
+            }
+        }())
         .position(
+            // FIXME: If I move this into a var, the build never finishes
+            // TODO: Need to take the safe area into account
             x: {
                 let x: CGFloat
 
@@ -192,9 +209,9 @@ struct ToolTipPresentor<Content>: View where Content: View {
                 case .bottom:
                     x = targetFrame.midX
                 case .leading:
-                    x = targetFrame.minX - toolTipArrowSize - size.width / 2
+                    x = targetFrame.minX - toolTipSpacing - size.width / 2
                 case .trailing:
-                    x = targetFrame.maxX + toolTipArrowSize + size.width / 2
+                    x = targetFrame.maxX + toolTipSpacing + size.width / 2
                 }
 
                 return min(max(x, toolTipSpacing + size.width / 2), UIScreen.width - toolTipSpacing - size.width / 2)
@@ -204,55 +221,15 @@ struct ToolTipPresentor<Content>: View where Content: View {
 
                 switch targetEdge {
                 case .top:
-                    y = targetFrame.minY - toolTipArrowSize - size.height / 2
+                    y = targetFrame.minY - toolTipSpacing - size.height / 2
                 case .bottom:
-                    y = targetFrame.maxY + toolTipArrowSize + size.height / 2
+                    y = targetFrame.maxY + toolTipSpacing + size.height / 2
                 case .leading: fallthrough
                 case .trailing:
                     y = targetFrame.midY
                 }
 
                 return min(max(y, toolTipSpacing + size.height / 2), UIScreen.height - toolTipSpacing - size.height / 2)
-            }()
-        )
-        .ignoresSafeArea()
-
-        ToolTipArrow(
-            toolTipDirection: targetEdge,
-            toolTipSpacing: toolTipArrowSize
-        )
-        .foregroundStyle(.ultraThinMaterial)
-        .frame(width: toolTipArrowSize, height: toolTipArrowSize)
-        .position(
-            x: {
-                let x: CGFloat
-
-                switch targetEdge {
-                case .top: fallthrough
-                case .bottom:
-                    x = targetFrame.midX
-                case .leading:
-                    x = targetFrame.minX - toolTipArrowSize / 2
-                case .trailing:
-                    x = targetFrame.maxX + toolTipArrowSize / 2
-                }
-
-                return min(max(x, toolTipSpacing + toolTipArrowSize / 2), UIScreen.width - toolTipSpacing - toolTipArrowSize / 2)
-            }(),
-            y: {
-                let y: CGFloat
-
-                switch targetEdge {
-                case .top:
-                    y = targetFrame.minY - toolTipArrowSize / 2
-                case .bottom:
-                    y = targetFrame.maxY + toolTipArrowSize / 2
-                case .leading: fallthrough
-                case .trailing:
-                    y = targetFrame.midY
-                }
-
-                return min(max(y, toolTipSpacing + toolTipSpacing / 2), UIScreen.height - toolTipSpacing - toolTipSpacing / 2)
             }()
         )
         .ignoresSafeArea()
