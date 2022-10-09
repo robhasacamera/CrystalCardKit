@@ -33,6 +33,14 @@ import SwiftUI
 extension View {
     // TODO: Document
     // TODO: Add option to style the window
+    /// Presents a window over the top of the current
+    /// - Parameters:
+    ///   - isPresented: <#isPresented description#>
+    ///   - dimmed: <#dimmed description#>
+    ///   - tapBackgroundToDismiss: <#tapBackgroundToDismiss description#>
+    ///   - onDismiss: <#onDismiss description#>
+    ///   - content: <#content description#>
+    /// - Returns: <#description#>
     func presentWindow<Content>(
         isPresented: Binding<Bool>,
         dimmed: Bool = true,
