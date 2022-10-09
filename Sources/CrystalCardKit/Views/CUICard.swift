@@ -31,9 +31,9 @@ import SwiftUI
 
 // TODO: Need to think through this one a bit. How do I make it easy to display/dismiss the window? Maybe this component is just a base for other components, could use it to build floating window. Or a window presented from an anchor. 
 /// A stylized window that displays some content and provides a control for closing.
-public struct CUIWindow<Icon, Content>: _CUIStylizedWindow where Icon: View, Content: View {
-    public typealias Control = CUIWindow<Icon, Content>
-    public typealias Window = CUIWindow<Icon, Content>
+public struct CUICard<Icon, Content>: _CUIStylizedCard where Icon: View, Content: View {
+    public typealias Control = CUICard<Icon, Content>
+    public typealias Card = CUICard<Icon, Content>
 
     public var control: CUIExpandableButton<Icon, Content>
 
@@ -62,7 +62,7 @@ public struct CUIWindow<Icon, Content>: _CUIStylizedWindow where Icon: View, Con
     }
 }
 
-public extension CUIWindow where Icon == CUISFSymbolIcon {
+public extension CUICard where Icon == CUISFSymbolIcon {
     /// Creates window, using a SF Symbol as the icon and the content provided.
     /// - Parameters:
     ///   - sfSymbolName: The name of the SF Symbol to use as the icon.
@@ -84,7 +84,7 @@ public extension CUIWindow where Icon == CUISFSymbolIcon {
     }
 }
 
-public extension CUIWindow where Icon == EmptyView {
+public extension CUICard where Icon == EmptyView {
     /// Creates window, using the content provide.
     ///
     /// This is a conveneince constructor that creates a window without a header.
@@ -109,7 +109,7 @@ struct CUIWindow_Previews: PreviewProvider {
         CUICenteredPreview(title: "CUIWindow") {
             VStack {
                 CUICaptionedView("Custom Icon Init") {
-                    CUIWindow {
+                    CUICard {
                         Rectangle()
                             .foregroundColor(.black)
                             .frame(
@@ -126,7 +126,7 @@ struct CUIWindow_Previews: PreviewProvider {
                 }
 
                 CUICaptionedView("SF Symbol Init") {
-                    CUIWindow(sfSymbolName: "doc.fill") {
+                    CUICard(sfSymbolName: "doc.fill") {
                         Text(CUILoremIpsum.words(8))
                             .padding()
                             .frame(width: 200)
@@ -136,7 +136,7 @@ struct CUIWindow_Previews: PreviewProvider {
                 }
 
                 CUICaptionedView("No Header Init") {
-                    CUIWindow {
+                    CUICard {
                         Text(CUILoremIpsum.words(8))
                             .padding()
                             .frame(width: 200)
@@ -144,7 +144,7 @@ struct CUIWindow_Previews: PreviewProvider {
                 }
 
                 CUICaptionedView(".title(...) & .subtitle(...)") {
-                    CUIWindow(sfSymbolName: "doc.fill") {
+                    CUICard(sfSymbolName: "doc.fill") {
                         Text(CUILoremIpsum.words(8))
                             .padding()
                             .frame(width: 200)

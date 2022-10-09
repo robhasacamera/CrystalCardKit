@@ -29,7 +29,7 @@ import SwiftUI
 #if os(iOS)
 
 // TODO: This and FullScreenCoverContainer can probably be made in a very generic way. They're both essentially doing the say thing, chaining presenting/dismissing behavior.
-struct WindowPresentor<OriginalContent, PresentedContent>: View where OriginalContent: View, PresentedContent: View {
+struct CardPresentor<OriginalContent, PresentedContent>: View where OriginalContent: View, PresentedContent: View {
     @State
     var internalIsPresented: Bool = false
     @State
@@ -83,7 +83,7 @@ struct WindowPresentor<OriginalContent, PresentedContent>: View where OriginalCo
                         }
 
                     if !windowHidden {
-                        CUIWindow { presentedContent }
+                        CUICard { presentedContent }
                             .transition(.opacity.combined(with: .move(edge: .bottom)))
                     }
                 }

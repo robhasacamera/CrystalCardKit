@@ -29,12 +29,12 @@ import CrystalViewUtilities
 import SwiftUI
 
 // TODO: Document
-public struct CUIToolTip<Icon, Content>: CUIStylizedToolTip, _CUIStylizedWindow where Icon: View, Content: View {
+public struct CUIToolTip<Icon, Content>: CUIStylizedToolTip, _CUIStylizedCard where Icon: View, Content: View {
     public typealias Control = CUIToolTip<Icon, Content>
-    public typealias Window = CUIToolTip<Icon, Content>
+    public typealias Card = CUIToolTip<Icon, Content>
     public typealias ToolTip = CUIToolTip<Icon, Content>
 
-    public var control: CUIWindow<Icon, Content>
+    public var control: CUICard<Icon, Content>
     var presentationEdge: Edge
 
     var arrowWidth: CGFloat = .standardSpacing * 2
@@ -54,7 +54,7 @@ public struct CUIToolTip<Icon, Content>: CUIStylizedToolTip, _CUIStylizedWindow 
         closeAction: CUIAction? = nil
     ) {
         self.presentationEdge = presentationEdge
-        control = CUIWindow(icon: icon, content: content, closeAction: closeAction)
+        control = CUICard(icon: icon, content: content, closeAction: closeAction)
             .hideBackground()
     }
 
@@ -97,7 +97,7 @@ public extension CUIToolTip where Icon == CUISFSymbolIcon {
         closeAction: CUIAction? = nil
     ) {
         self.presentationEdge = presentationEdge
-        control = CUIWindow(sfSymbolName: sfSymbolName, content: content, closeAction: closeAction)
+        control = CUICard(sfSymbolName: sfSymbolName, content: content, closeAction: closeAction)
             .hideBackground()
     }
 }

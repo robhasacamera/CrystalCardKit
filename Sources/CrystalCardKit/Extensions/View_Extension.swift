@@ -48,7 +48,7 @@ extension View {
         onDismiss: (() -> Void)? = nil,
         @ViewBuilder content: @escaping () -> Content
     ) -> some View where Content: View {
-        WindowPresentor(
+        CardPresentor(
             isPresented: isPresented,
             dimmed: dimmed,
             tapBackgroundToDismiss: tapBackgroundToDismiss,

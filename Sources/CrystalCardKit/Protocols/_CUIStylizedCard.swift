@@ -27,13 +27,14 @@
 import CrystalButtonKit
 import SwiftUI
 
-protocol _CUIStylizedWindow: CUIStylizedWindow, _CUIStylizedControl {
+// TODO: Rename CUIStylizedWindow to CUIStylizedCard to match this.
+protocol _CUIStylizedCard: CUIStylizedWindow, _CUIStylizedControl {
     associatedtype _Window: CUIStylizedWindow
 
     var control: _Window { get set }
 }
 
-extension _CUIStylizedWindow {
+extension _CUIStylizedCard {
     public var hideHeader: Bool {
         get {
             control.hideHeader
