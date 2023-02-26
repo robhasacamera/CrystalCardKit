@@ -47,22 +47,15 @@ extension View {
         onDismiss: (() -> Void)? = nil,
         @ViewBuilder content: @escaping () -> Content
     ) -> some View where Content: View {
-//        presentFullScreen(isPresented: isPresented) {
-//            CUICard { content() }
-//                .transition(.opacity.combined(with: .move(edge: .bottom)))
-//                .animation(.easeInOut, value: isPresented.wrappedValue)
-//        }
-
-        CardPresentor(
+        modifier(FullScreenAnimationChainingModifier(
             isPresented: isPresented,
             dimmed: dimmed,
             tapBackgroundToDismiss: tapBackgroundToDismiss,
             onDismiss: onDismiss
         ) {
-            self
-        } presentedContent: {
-            content()
-        }
+            CUICard { content() }
+                .transition(.opacity.combined(with: .move(edge: .bottom)))
+        })
     }
 
     // TODO: Add option to style the tooltip
