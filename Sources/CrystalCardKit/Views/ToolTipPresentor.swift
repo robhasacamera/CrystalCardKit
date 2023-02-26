@@ -27,6 +27,7 @@
 import CrystalViewUtilities
 import SwiftUI
 
+// TODO: Can probably change this into a view modifier to make it easier to manage
 // TODO: Animate this in and out via scale. This is suprisingly hard to do for a few reason: 1. You need to have something like window presentor to get the dismiss animation to be correct 2. Since the tooltip's edge is calculated based on it's size, it can change edges while transforming.
 struct ToolTipPresentor<Content>: View where Content: View {
     internal init(
@@ -84,7 +85,7 @@ struct ToolTipPresentor<Content>: View where Content: View {
     // Add animation to scale from center of target
     var body: some View {
         CUIToolTip(presentationEdge: targetEdge) {
-            CUISizeReader(size: $size, id: "ToolTipContent") {
+            CUIChildSizeReader(size: $size, id: "ToolTipContent") {
                 content
             }
         }
@@ -137,5 +138,6 @@ struct ToolTipPresentor<Content>: View where Content: View {
             }()
         )
         .ignoresSafeArea()
+        .transition(.scale)
     }
 }

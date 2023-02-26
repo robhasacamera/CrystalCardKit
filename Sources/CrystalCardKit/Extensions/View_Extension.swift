@@ -133,6 +133,7 @@ extension View {
                 ) {
                     content()
                 }
+                .animation(.easeInOut, value: isPresented.wrappedValue)
             }
         }
     }

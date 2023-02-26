@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/robhasacamera/CrystalButtonKit.git",
         "state": {
           "branch": null,
-          "revision": "170f7ca97011ea1a2122d9dc08345b04de29f050",
-          "version": "1.0.5"
+          "revision": "330fc1680cce71b41cf06047cbac384cbd0ed52b",
+          "version": "1.0.6"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/robhasacamera/CrystalViewUtilities.git",
         "state": {
           "branch": null,
-          "revision": "4346ff7e33420433061d573306b2ddfc8e0ae56f",
-          "version": "0.6.0"
+          "revision": "c47320db00e0a229cd3a49b204a158585756aa79",
+          "version": "0.12.0"
         }
       },
       {

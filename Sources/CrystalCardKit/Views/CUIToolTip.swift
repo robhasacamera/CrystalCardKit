@@ -127,7 +127,7 @@ extension Edge {
     }
 }
 
-struct SwiftUIView_Previews: PreviewProvider {
+struct CUIToolTip_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
             Spacer()
