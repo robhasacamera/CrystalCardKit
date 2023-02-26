@@ -74,12 +74,17 @@ struct CardPresentor<OriginalContent, PresentedContent>: View where OriginalCont
             ) {
                 ZStack {
                     Rectangle()
-                        .foregroundColor(.clear)
-                        .frame(width: 0, height: 0)
+                        .foregroundColor(.black)
+                        .opacity(0.01)
+                        .ignoresSafeArea()
                         .onAppear {
                             DispatchQueue.main.asyncAfter(deadline: .now() + animationTime) {
                                 windowHidden = false
                             }
+                        }
+                        .onTapGesture {
+                            isPresented = false
+                            onDismiss?()
                         }
 
                     if !windowHidden {
@@ -92,7 +97,6 @@ struct CardPresentor<OriginalContent, PresentedContent>: View where OriginalCont
             .onChange(of: isPresented) { _ in
                 // if presented, then present the window after fade in animation
                 // if not presented, then fade out window before triggering the presented animation
-
                 if isPresented {
                     internalIsPresented = true
                 } else {
@@ -101,6 +105,12 @@ struct CardPresentor<OriginalContent, PresentedContent>: View where OriginalCont
                     DispatchQueue.main.asyncAfter(deadline: .now() + animationTime) {
                         internalIsPresented = false
                     }
+                }
+            }
+            .onChange(of: internalIsPresented) { _ in
+                // Keeping thes values in sync when internalIsPresented is updated by presentFullScreen independently of isPresented
+                if !internalIsPresented && isPresented || internalIsPresented && !isPresented {
+                    isPresented = internalIsPresented
                 }
             }
     }

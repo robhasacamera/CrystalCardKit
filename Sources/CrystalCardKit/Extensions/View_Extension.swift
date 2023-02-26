@@ -47,6 +47,12 @@ extension View {
         onDismiss: (() -> Void)? = nil,
         @ViewBuilder content: @escaping () -> Content
     ) -> some View where Content: View {
+//        presentFullScreen(isPresented: isPresented) {
+//            CUICard { content() }
+//                .transition(.opacity.combined(with: .move(edge: .bottom)))
+//                .animation(.easeInOut, value: isPresented.wrappedValue)
+//        }
+
         CardPresentor(
             isPresented: isPresented,
             dimmed: dimmed,
