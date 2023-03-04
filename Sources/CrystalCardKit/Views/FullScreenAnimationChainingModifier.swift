@@ -44,7 +44,7 @@ struct FullScreenAnimationChainingModifier<PresentedContent>: ViewModifier where
     let onDismiss: (() -> Void)?
     let presentedContent: PresentedContent
 
-    let animationTime: TimeInterval = 0.1
+    let animationTime: TimeInterval = 0.5
 
     init(
         isPresented: Binding<Bool>,

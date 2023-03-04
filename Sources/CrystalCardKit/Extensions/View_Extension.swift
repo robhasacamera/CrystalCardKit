@@ -78,11 +78,11 @@ extension View {
         onDismiss: (() -> Void)? = nil,
         @ViewBuilder content: @escaping () -> Content
     ) -> some View where Content: View {
+
         // TODO: Need to document the difference between this and a regular goemtry reader. I think it's that a regular geomtry reader provides the geometry for a parent while this one provides geometry for the child inside of it. So it can use it's own geometry on itself.
         CUIChildGeometryReader(id: "id") { proxy in
-            presentFullScreen(
+            modifier(FullScreenAnimationChainingModifier(
                 isPresented: isPresented,
-                // This has custom dimming
                 dimmed: false,
                 tapBackgroundToDismiss: tapBackgroundToDismiss,
                 onDismiss: onDismiss
@@ -90,8 +90,9 @@ extension View {
                 if dimmed {
                     Color.black
                         .frame(width: UIScreen.width, height: UIScreen.height)
+                        .offset(y: 10.5)
                         .opacity(0.5)
-                        .ignoresSafeArea()
+//                        .ignoresSafeArea()
                         .reverseMask {
                             self
                                 .position(
@@ -110,7 +111,7 @@ extension View {
                                         return frame.midY
                                     }()
                                 )
-                                .ignoresSafeArea()
+//                                .ignoresSafeArea()
 
                             ToolTipPresentor(
                                 targetFrame: proxy?.frame(in: .global) ?? .zero,
@@ -132,8 +133,8 @@ extension View {
                 ) {
                     content()
                 }
-                .animation(.easeInOut, value: isPresented.wrappedValue)
-            }
+                .animation(.linear, value: isPresented.wrappedValue)
+            })
         }
     }
 }
@@ -256,12 +257,13 @@ struct PresentToolTip_Previews: PreviewProvider {
                 }
             }
             .padding(.standardSpacing)
-//            .previewInterfaceOrientation(.landscapeLeft)
+
         }
     }
 
     static var previews: some View {
         Preview()
+            .previewInterfaceOrientation(.landscapeLeft)
     }
 }
 
@@ -349,6 +351,9 @@ struct PresentToolTipForcedEdges_Previews: PreviewProvider {
 
     static var previews: some View {
         Preview()
+//            .previewInterfaceOrientation(.landscapeLeft)
+        Preview()
+            .previewInterfaceOrientation(.landscapeLeft)
     }
 }
 

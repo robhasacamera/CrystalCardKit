@@ -27,6 +27,26 @@
 import CrystalViewUtilities
 import SwiftUI
 
+private struct SafeAreaInsetsKey: EnvironmentKey {
+    static var defaultValue: EdgeInsets {
+        (UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.safeAreaInsets ?? .zero).insets
+    }
+}
+
+extension EnvironmentValues {
+
+    var safeAreaInsets: EdgeInsets {
+        self[SafeAreaInsetsKey.self]
+    }
+}
+
+private extension UIEdgeInsets {
+
+    var insets: EdgeInsets {
+        EdgeInsets(top: top, leading: left, bottom: bottom, trailing: right)
+    }
+}
+
 // TODO: Can probably change this into a view modifier to make it easier to manage
 // TODO: Animate this in and out via scale. This is suprisingly hard to do for a few reason: 1. You need to have something like window presentor to get the dismiss animation to be correct 2. Since the tooltip's edge is calculated based on it's size, it can change edges while transforming.
 struct ToolTipPresentor<Content>: View where Content: View {
@@ -39,6 +59,8 @@ struct ToolTipPresentor<Content>: View where Content: View {
         self.presentationEdge = presentationEdge
         self.content = content()
     }
+
+    @Environment(\.safeAreaInsets) private var safeAreaInsets
 
     let toolTipSpacing: CGFloat = .standardSpacing
     var toolTipArrowSize: CGFloat { toolTipSpacing * 2 }
@@ -104,6 +126,8 @@ struct ToolTipPresentor<Content>: View where Content: View {
             }
         }())
         .arrowWidth(toolTipArrowSize)
+//        .transition(.scale)
+//        .ignoresSafeArea()
         .position(
             // TODO: Need to take the safe area into account
             x: {
@@ -122,7 +146,7 @@ struct ToolTipPresentor<Content>: View where Content: View {
                 return min(max(x, toolTipSpacing + size.width / 2), UIScreen.width - toolTipSpacing - size.width / 2)
             }(),
             y: {
-                let y: CGFloat
+                var y: CGFloat
 
                 switch targetEdge {
                 case .top:
@@ -134,10 +158,23 @@ struct ToolTipPresentor<Content>: View where Content: View {
                     y = targetFrame.midY
                 }
 
+//                y -= .standardSpacing
+
                 return min(max(y, toolTipSpacing + size.height / 2), UIScreen.height - toolTipSpacing - size.height / 2)
             }()
         )
-        .ignoresSafeArea()
-        .transition(.scale)
+
+        .transition(
+            .scale
+                .combined(with: .offset(
+                x: {
+                    targetFrame.midX - UIScreen.width.half
+                }(),
+                y: {
+                    targetFrame.midY - UIScreen.height.half
+                }()
+            ))
+        )
+//        .ignoresSafeArea()
     }
 }
