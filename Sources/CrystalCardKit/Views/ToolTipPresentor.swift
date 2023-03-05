@@ -126,12 +126,10 @@ struct ToolTipPresentor<Content>: View where Content: View {
             }
         }())
         .arrowWidth(toolTipArrowSize)
-//        .transition(.scale)
-//        .ignoresSafeArea()
         .position(
             // TODO: Need to take the safe area into account
             x: {
-                let x: CGFloat
+                var x: CGFloat
 
                 switch targetEdge {
                 case .top: fallthrough
@@ -142,6 +140,9 @@ struct ToolTipPresentor<Content>: View where Content: View {
                 case .trailing:
                     x = targetFrame.maxX + toolTipSpacing + size.width / 2
                 }
+
+                // TODO: adjust baded on layout direction
+                x -= safeAreaInsets.leading
 
                 return min(max(x, toolTipSpacing + size.width / 2), UIScreen.width - toolTipSpacing - size.width / 2)
             }(),
@@ -158,23 +159,17 @@ struct ToolTipPresentor<Content>: View where Content: View {
                     y = targetFrame.midY
                 }
 
-//                y -= .standardSpacing
+                y -= safeAreaInsets.top
 
                 return min(max(y, toolTipSpacing + size.height / 2), UIScreen.height - toolTipSpacing - size.height / 2)
             }()
         )
-
         .transition(
             .scale
                 .combined(with: .offset(
-                x: {
-                    targetFrame.midX - UIScreen.width.half
-                }(),
-                y: {
-                    targetFrame.midY - UIScreen.height.half
-                }()
+                x: targetFrame.midX - UIScreen.width.half,
+                y: targetFrame.midY - UIScreen.height.half
             ))
         )
-//        .ignoresSafeArea()
     }
 }

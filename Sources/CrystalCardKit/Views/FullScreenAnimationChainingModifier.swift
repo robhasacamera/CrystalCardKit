@@ -44,7 +44,7 @@ struct FullScreenAnimationChainingModifier<PresentedContent>: ViewModifier where
     let onDismiss: (() -> Void)?
     let presentedContent: PresentedContent
 
-    let animationTime: TimeInterval = 0.5
+    let animationTime: TimeInterval = 0.15
 
     init(
         isPresented: Binding<Bool>,
@@ -89,7 +89,7 @@ struct FullScreenAnimationChainingModifier<PresentedContent>: ViewModifier where
                         presentedContent
                     }
                 }
-                .animation(.linear(duration: animationTime), value: windowHidden)
+                .animation(.easeInOut(duration: animationTime) , value: windowHidden)
             }
             .onChange(of: isPresented) { _ in
                 // if presented, then present the window after fade in animation

@@ -78,63 +78,56 @@ extension View {
         onDismiss: (() -> Void)? = nil,
         @ViewBuilder content: @escaping () -> Content
     ) -> some View where Content: View {
-
         // TODO: Need to document the difference between this and a regular goemtry reader. I think it's that a regular geomtry reader provides the geometry for a parent while this one provides geometry for the child inside of it. So it can use it's own geometry on itself.
         CUIChildGeometryReader(id: "id") { proxy in
-            modifier(FullScreenAnimationChainingModifier(
-                isPresented: isPresented,
-                dimmed: false,
-                tapBackgroundToDismiss: tapBackgroundToDismiss,
-                onDismiss: onDismiss
-            ) {
-                if dimmed {
-                    Color.black
-                        .frame(width: UIScreen.width, height: UIScreen.height)
-                        .offset(y: 10.5)
-                        .opacity(0.5)
-//                        .ignoresSafeArea()
-                        .reverseMask {
-                            self
-                                .position(
-                                    x: {
-                                        guard let frame = proxy?.frame(in: .global) else {
-                                            return 0
-                                        }
-
-                                        return frame.midX
-                                    }(),
-                                    y: {
-                                        guard let frame = proxy?.frame(in: .global) else {
-                                            return 0
-                                        }
-
-                                        return frame.midY
-                                    }()
-                                )
-//                                .ignoresSafeArea()
-
-                            ToolTipPresentor(
-                                targetFrame: proxy?.frame(in: .global) ?? .zero,
-                                presentationEdge: presentationEdge
-                            ) {
-                                content()
-                            }
-                        }
-                        .onTapGesture {
-                            if tapBackgroundToDismiss {
-                                isPresented.wrappedValue = false
-                            }
-                        }
-                }
-
-                ToolTipPresentor(
-                    targetFrame: proxy?.frame(in: .global) ?? .zero,
-                    presentationEdge: presentationEdge
+            modifier(
+                FullScreenAnimationChainingModifier(
+                    isPresented: isPresented,
+                    dimmed: false,
+                    tapBackgroundToDismiss: tapBackgroundToDismiss,
+                    onDismiss: onDismiss
                 ) {
-                    content()
+                    Group {
+                        if dimmed {
+                            Color.black
+                                .opacity(0.5)
+                                .ignoresSafeArea()
+                                .reverseMask {
+                                    self
+                                        .position(
+                                            x: {
+                                                guard let frame = proxy?.frame(in: .global) else {
+                                                    return 0
+                                                }
+
+                                                return frame.midX
+                                            }(),
+                                            y: {
+                                                guard let frame = proxy?.frame(in: .global) else {
+                                                    return 0
+                                                }
+
+                                                return frame.midY
+                                            }()
+                                        )
+                                }
+                                .onTapGesture {
+                                    if tapBackgroundToDismiss {
+                                        isPresented.wrappedValue = false
+                                    }
+                                }
+                                .ignoresSafeArea()
+                        }
+
+                        ToolTipPresentor(
+                            targetFrame: proxy?.frame(in: .global) ?? .zero,
+                            presentationEdge: presentationEdge
+                        ) {
+                            content()
+                        }
+                    }
                 }
-                .animation(.linear, value: isPresented.wrappedValue)
-            })
+            )
         }
     }
 }
@@ -164,6 +157,9 @@ struct PresentCard_Previews: PreviewProvider {
 
     static var previews: some View {
         Preview()
+
+        Preview()
+            .previewInterfaceOrientation(.landscapeLeft)
     }
 }
 
@@ -257,11 +253,12 @@ struct PresentToolTip_Previews: PreviewProvider {
                 }
             }
             .padding(.standardSpacing)
-
         }
     }
 
     static var previews: some View {
+        Preview()
+
         Preview()
             .previewInterfaceOrientation(.landscapeLeft)
     }

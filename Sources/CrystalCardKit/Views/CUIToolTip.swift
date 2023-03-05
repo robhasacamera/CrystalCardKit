@@ -69,7 +69,9 @@ public struct CUIToolTip<Icon, Content>: CUIStylizedToolTip, _CUIStylizedCard wh
                     arrowOffset: arrowOffset,
                     cornerRadius: .cornerRadius
                 )
-                .foregroundStyle(.thinMaterial))
+                .foregroundStyle(.thinMaterial)
+            )
+//            .ignoresSafeArea()
     }
 }
 
